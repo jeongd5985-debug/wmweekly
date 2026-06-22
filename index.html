@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WM 주간 수탁고 대시보드</title>
+<style>
+  :root{
+    --bg:#f6f4ef;--card:#fff;--ink:#23211c;--muted:#8a857b;--line:#e7e2d8;
+    --accent:#f37321;--accent-soft:#fdeee2;--up:#1f9d63;--up-soft:#e7f5ee;
+    --down:#d24b3e;--down-soft:#fbeae8;--radius:14px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Malgun Gothic","맑은 고딕",sans-serif;
+    background:var(--bg);color:var(--ink);line-height:1.5;-webkit-font-smoothing:antialiased;padding:24px 22px 80px}
+  .wrap{max-width:1080px;margin:0 auto}
+
+  /* upload bar */
+  .uploader{background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:14px 16px;margin-bottom:18px;
+    display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+  .uploader .u-title{font-size:13px;font-weight:800;color:var(--accent);margin-right:4px}
+  .drop{flex:1;min-width:230px;border:1.5px dashed #d8cdbb;border-radius:10px;padding:10px 13px;cursor:pointer;
+    background:#fbf8f1;transition:.15s;display:flex;align-items:center;gap:9px}
+  .drop:hover{border-color:var(--accent);background:var(--accent-soft)}
+  .drop.ok{border-color:var(--up);background:var(--up-soft)}
+  .drop .ic{font-size:17px}
+  .drop .t{font-size:12.5px;font-weight:700}
+  .drop .s{font-size:11px;color:var(--muted)}
+  .drop input{display:none}
+
+  header{display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:18px}
+  header h1{font-size:21px;font-weight:800;letter-spacing:-.5px}
+  header h1 .bar{display:inline-block;width:6px;height:20px;background:var(--accent);border-radius:3px;margin-right:9px;transform:translateY(2px)}
+  .period{font-size:12.5px;color:var(--muted)} .period b{color:var(--ink);font-weight:700}
+  .edit-hint{font-size:11.5px;color:var(--accent);background:var(--accent-soft);padding:4px 10px;border-radius:20px;font-weight:600}
+
+  .kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:18px}
+  .kpi{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:15px 18px}
+  .kpi .lab{font-size:12.5px;color:var(--muted);font-weight:600;margin-bottom:5px}
+  .kpi .val{font-size:24px;font-weight:800;letter-spacing:-1px}
+  .kpi .val .u{font-size:13px;font-weight:600;color:var(--muted);margin-left:2px}
+  .kpi .sub{font-size:11.5px;margin-top:4px;font-weight:600}
+  .kpi.total{background:var(--accent-soft);border-color:#f6d4ba} .kpi.total .val{color:var(--accent)}
+
+  section{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:17px 20px;margin-bottom:13px}
+  .sh{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:800;margin-bottom:12px}
+  .sh .n{display:inline-flex;align-items:center;justify-content:center;width:21px;height:21px;background:var(--ink);color:#fff;border-radius:6px;font-size:11.5px;font-weight:800}
+  .sh small{font-weight:600;color:var(--muted);font-size:11.5px}
+
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:13px}
+  @media(max-width:720px){.two{grid-template-columns:1fr}.kpis{grid-template-columns:1fr}.uploader{flex-direction:column;align-items:stretch}}
+  .subcard{border:1px solid var(--line);border-radius:10px;padding:12px 14px;background:#fbfaf7}
+  .subcard h4{font-size:12.5px;font-weight:800;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+  .tag{font-size:10.5px;font-weight:700;padding:2px 8px;border-radius:20px;background:#efece4;color:var(--muted)}
+
+  ul.items{list-style:none}
+  ul.items li{display:flex;justify-content:space-between;gap:10px;font-size:13px;padding:5px 0;border-bottom:1px dashed var(--line)}
+  ul.items li:last-child{border-bottom:none}
+  ul.items li .name .sub{display:block;color:var(--muted);font-size:11.5px;margin-top:1px}
+  .amt{font-weight:800;white-space:nowrap;font-variant-numeric:tabular-nums}
+  .up{color:var(--up)} .down{color:var(--down)}
+
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  th,td{padding:8px 8px;text-align:right;border-bottom:1px solid var(--line);font-variant-numeric:tabular-nums}
+  th{font-size:11.5px;color:var(--muted);font-weight:700}
+  th:first-child,td:first-child{text-align:left}
+  td.name{font-weight:700} tr:last-child td{border-bottom:none}
+  td.cause{text-align:left;color:var(--muted);font-size:12px}
+
+  .note{background:#fbfaf7;border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:8px;padding:11px 14px;font-size:13px;color:#4a463d;outline:none}
+  .note:focus{background:#fff;box-shadow:0 0 0 3px var(--accent-soft)}
+  [contenteditable]:focus{outline:none}
+  .insight{display:flex;gap:9px;align-items:flex-start;background:var(--accent-soft);border-radius:9px;padding:10px 13px;margin-top:11px;font-size:12.5px;font-weight:600;color:#8a4318}
+  .insight .ic{font-weight:800;color:var(--accent)}
+  .insight span[contenteditable]{outline:none;border-radius:4px;flex:1}
+  .insight span[contenteditable]:hover{cursor:text}
+  .insight span[contenteditable]:focus{background:#fff;box-shadow:0 0 0 2px rgba(243,115,33,.4);padding:2px 5px;margin:-2px -5px}
+
+  .cmp-bar{display:flex;align-items:center;gap:8px;font-size:12.5px;padding:6px 0;border-bottom:1px dashed var(--line)}
+  .cmp-bar:last-child{border:none}
+  .cmp-bar .nm{width:70px;font-weight:700}
+  .cmp-bar .v{width:74px;text-align:right;font-weight:800;font-variant-numeric:tabular-nums}
+  .cmp-bar .lab{font-size:10.5px;color:var(--muted);width:34px}
+
+  section.report{background:var(--ink);border-color:var(--ink)}
+  section.report .sh{color:#fff} section.report .sh .n{background:var(--accent)}
+  .report-box{background:#2e2b24;border:1px solid #413d34;border-radius:10px;padding:14px 16px;color:#ece8df;font-size:13.5px;line-height:1.8}
+  .report-box:focus{box-shadow:0 0 0 3px rgba(243,115,33,.3)}
+  .report-box ul{margin:0;padding-left:18px} .report-box li{margin-bottom:5px} .report-box b{color:#ffb784}
+  .copybtn{margin-top:11px;background:var(--accent);color:#fff;border:none;border-radius:8px;padding:9px 16px;font-size:12.5px;font-weight:700;cursor:pointer;font-family:inherit}
+  .copybtn:active{transform:translateY(1px)} .copybtn.ok{background:var(--up)}
+  footer{text-align:center;font-size:11px;color:var(--muted);margin-top:18px}
+  .empty{color:#bcae93;font-style:italic;font-size:12.5px;padding:8px 0}
+  .toolbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+  .xbtn{background:#fff;border:1px solid var(--line);border-radius:8px;padding:7px 13px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;color:var(--ink);display:inline-flex;align-items:center;gap:5px;transition:.12s}
+  .xbtn:hover{border-color:var(--accent);color:var(--accent)}
+  .xbtn:active{transform:translateY(1px)}
+  .xbtn[disabled]{opacity:.55;cursor:wait}
+  .exporting .no-export{display:none!important}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="uploader no-export">
+    <span class="u-title">📂 엑셀 자동 로드</span>
+    <label class="drop" id="dropWM">
+      <span class="ic">①</span>
+      <span><span class="t" id="wmName">WM 수탁고 파일</span><span class="s">_수탁고_주간_*.xlsx ('오늘' 탭)</span></span>
+      <input type="file" id="fileWM" accept=".xlsx,.xls">
+    </label>
+    <label class="drop" id="dropKO">
+      <span class="ic">②</span>
+      <span><span class="t" id="koName">협회 판매채널 파일</span><span class="s">판매채널현황_*.xlsx (억단위)</span></span>
+      <input type="file" id="fileKO" accept=".xlsx,.xls">
+    </label>
+  </div>
+
+  <header>
+    <div>
+      <h1><span class="bar"></span>WM마케팅본부 주간 수탁고 리뷰</h1>
+      <div class="period">기준일 <b id="asof">-</b> · 비교기간 <b id="period">-</b> · 단위 억원</div>
+    </div>
+    <div class="toolbar no-export">
+      <span class="edit-hint">✎ 클릭해서 수정</span>
+      <button class="xbtn" id="btnImg">🖼️ 이미지 저장</button>
+    </div>
+  </header>
+
+  <div class="kpis">
+    <div class="kpi total"><div class="lab">합계</div><div class="val" id="kTotal">-</div><div class="sub" id="kTotalSub"></div></div>
+    <div class="kpi"><div class="lab">리테일</div><div class="val" id="kRetail">-</div><div class="sub" id="kRetailSub"></div></div>
+    <div class="kpi"><div class="lab">연금</div><div class="val" id="kPension">-</div><div class="sub" id="kPensionSub"></div></div>
+  </div>
+
+  <section>
+    <div class="sh"><span class="n">1</span> 수탁고 리뷰 · 시장 코멘트</div>
+    <div class="note" id="cmt1" contenteditable="true"></div>
+  </section>
+
+  <section>
+    <div class="sh"><span class="n">2</span> 주간 리테일 · 연금 주요 설정해지</div>
+    <div class="two">
+      <div class="subcard"><h4>리테일 유입 <span class="tag">MMF 위주</span></h4><ul class="items" id="retailList"></ul></div>
+      <div class="subcard"><h4>연금 유출 <span class="tag">TDF 환매</span></h4><ul class="items" id="pensionList"></ul></div>
+    </div>
+    <div class="insight"><span class="ic">▸</span><span id="ins2" contenteditable="true"></span></div>
+  </section>
+
+  <section>
+    <div class="sh"><span class="n">3</span> 판매사별 주요 설정해지 <small>유입 / 유출 상위</small></div>
+    <div class="two">
+      <div class="subcard"><h4>유입</h4><ul class="items" id="salesIn"></ul></div>
+      <div class="subcard"><h4>유출</h4><ul class="items" id="salesOut"></ul></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="sh"><span class="n">4</span> 전략펀드별 주요 설정해지 <small>설정액 / NAV 증감</small></div>
+    <table><thead><tr><th>전략펀드</th><th>설정액 증감</th><th>NAV 증감</th><th>NAV 잔액</th></tr></thead><tbody id="stratBody"></tbody></table>
+    <div class="insight"><span class="ic">▸</span><span id="ins4" contenteditable="true"></span></div>
+  </section>
+
+  <section>
+    <div class="sh"><span class="n">5</span> 자산분류 (제로인 대분류) 별 주요 증감</div>
+    <table><thead><tr><th>대분류</th><th>설정 증감</th><th>NAV 증감</th></tr></thead><tbody id="assetBody"></tbody></table>
+  </section>
+
+  <section>
+    <div class="sh"><span class="n">6</span> 시장 전체 트렌드 vs 한화 <small>협회 기준 · 억원</small></div>
+    <div id="koContent">
+      <div class="two">
+        <div class="subcard">
+          <h4>제로인 대분류: 한화 vs 시장전체</h4>
+          <div id="cmpList"></div>
+        </div>
+        <div class="subcard">
+          <h4>주간 시장 주요 순설정 펀드</h4>
+          <ul class="items" id="mktFunds"></ul>
+        </div>
+      </div>
+      <div class="two" style="margin-top:13px">
+        <div class="subcard"><h4>제로인유형 × 판매사 (절댓값 상위)</h4><ul class="items" id="typeSales"></ul></div>
+        <div class="subcard"><h4>신규설정 펀드 <span class="tag" id="newCnt"></span></h4><ul class="items" id="newFunds"></ul></div>
+      </div>
+      <div class="note" id="cmt6" contenteditable="true" style="margin-top:13px"></div>
+    </div>
+  </section>
+
+  <section class="report no-export">
+    <div class="sh"><span class="n">7</span> 보고 멘트 <small style="color:#a89e8e">— 자동 생성 · 편집 가능 · (저장 시 제외)</small></div>
+    <div class="report-box" id="report" contenteditable="true"></div>
+    <button class="copybtn" id="copy">📋 보고멘트 복사</button>
+  </section>
+
+  <footer>WM마케팅본부 · 주간 수탁고 대시보드 · 엑셀 파일을 드롭하면 자동 갱신 · 회색 영역 클릭 시 수정</footer>
+</div>
+
+<script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script>
+const TODAY_DATA = {
+ "wm": {
+  "total": 64874,
+  "retail": 23452,
+  "pension": 41422,
+  "flow_total": -361.7,
+  "nav_chg_total": 3657.8,
+  "flow_retail": -214.5,
+  "flow_pension": -147.2,
+  "strat": [
+   {
+    "name": "K제조핵심",
+    "flow": -174.5,
+    "nav_chg": 7.6,
+    "nav": 1779
+   },
+   {
+    "name": "K방산조선원전",
+    "flow": 11.6,
+    "nav_chg": 131.7,
+    "nav": 1200
+   },
+   {
+    "name": "자사주품은고배당",
+    "flow": -20.1,
+    "nav_chg": -20.9,
+    "nav": 17
+   },
+   {
+    "name": "TDF",
+    "flow": -117.4,
+    "nav_chg": 352.1,
+    "nav": 14773
+   },
+   {
+    "name": "단기국공채",
+    "flow": -50.8,
+    "nav_chg": -49.4,
+    "nav": 4125
+   },
+   {
+    "name": "코리아밸류채권",
+    "flow": -16.6,
+    "nav_chg": -15.4,
+    "nav": 1376
+   },
+   {
+    "name": "헤라클레스",
+    "flow": -1.4,
+    "nav_chg": 9.6,
+    "nav": 417
+   }
+  ],
+  "asset": [
+   {
+    "name": "주식형",
+    "flow": -170.5,
+    "nav_chg": 2217.2
+   },
+   {
+    "name": "해외기타",
+    "flow": -117.4,
+    "nav_chg": 352.1
+   },
+   {
+    "name": "채권형",
+    "flow": -68.5,
+    "nav_chg": -62.1
+   },
+   {
+    "name": "해외주식형",
+    "flow": -22.3,
+    "nav_chg": 293.0
+   },
+   {
+    "name": "해외주식혼합형",
+    "flow": -5.8,
+    "nav_chg": -1.9
+   },
+   {
+    "name": "MMF",
+    "flow": 46.9,
+    "nav_chg": 49.3
+   }
+  ],
+  "sales_out": [
+   {
+    "name": "한화투자증권",
+    "v": -148.2
+   },
+   {
+    "name": "하나은행",
+    "v": -140.0
+   },
+   {
+    "name": "국민은행",
+    "v": -47.7
+   }
+  ],
+  "sales_in": [
+   {
+    "name": "신한투자증권",
+    "v": 10.4
+   },
+   {
+    "name": "미래에셋증권",
+    "v": 6.5
+   },
+   {
+    "name": "NH농협은행",
+    "v": 5.2
+   }
+  ],
+  "pension_detail": [
+   {
+    "name": "퇴직연금",
+    "v": -153.7
+   },
+   {
+    "name": "개인연금/연금저축",
+    "v": 5.8
+   }
+  ],
+  "fund_out": [
+   {
+    "name": "한화 LIFEPLUS 적격TDF 2045 (주식혼합-재",
+    "v": -165.6
+   },
+   {
+    "name": "한화 K제조핵심PLUS(주식) A",
+    "v": -165.2
+   },
+   {
+    "name": "한화내일받는단기국공채(채권) 종류C",
+    "v": -54.5
+   },
+   {
+    "name": "한화 자사주품은고배당주(주식) C-f",
+    "v": -20.0
+   },
+   {
+    "name": "한화 연금증권전환형 (주식) 종류C",
+    "v": -10.5
+   }
+  ],
+  "fund_in": [
+   {
+    "name": "한화개인MMF2호(국공채) 종류 C",
+    "v": 52.3
+   },
+   {
+    "name": "한화내일받는단기국공채(채권) 종류C-e",
+    "v": 17.9
+   },
+   {
+    "name": "한화자랑스러운한국기업연금증권전환형(주식) 종류A",
+    "v": 11.5
+   },
+   {
+    "name": "한화자랑스러운한국기업연금증권전환형(주식) 종류C",
+    "v": 11.2
+   },
+   {
+    "name": "한화 LIFEPLUS 적격TDF 2050 (주식혼합-재",
+    "v": 9.9
+   }
+  ]
+ },
+ "kofia": {
+  "hanwha_total": 81,
+  "compare": [
+   {
+    "name": "주식형",
+    "hanwha": -168,
+    "market": -1516
+   },
+   {
+    "name": "채권형",
+    "hanwha": -289,
+    "market": -3088
+   },
+   {
+    "name": "MMF",
+    "hanwha": 669,
+    "market": 82427
+   },
+   {
+    "name": "해외기타",
+    "hanwha": -112,
+    "market": 631
+   },
+   {
+    "name": "해외주식형",
+    "hanwha": -16,
+    "market": 260
+   }
+  ],
+  "mkt_in": [
+   {
+    "name": "삼성베스트MMF법인 1",
+    "v": 12692
+   },
+   {
+    "name": "우리큰만족신종MMF6",
+    "v": 12012
+   },
+   {
+    "name": "키움프런티어신종법인용 MMF 1",
+    "v": 11014
+   },
+   {
+    "name": "신한BEST신종법인용MMFGS-2(종류C)",
+    "v": 9000
+   },
+   {
+    "name": "KB법인용MMF I-1C",
+    "v": 7425
+   },
+   {
+    "name": "NH-Amundi법인MMF 8C0",
+    "v": 6618
+   }
+  ],
+  "mkt_out": [
+   {
+    "name": "우리큰만족신종MMF3ClassC",
+    "v": -2836
+   },
+   {
+    "name": "DB클린법인MMF 4ClassC",
+    "v": -2371
+   },
+   {
+    "name": "하나신종MMF(S-29)ClassC",
+    "v": -1115
+   },
+   {
+    "name": "신한BEST신종법인용MMFGS-2(종류C-w)",
+    "v": -950
+   },
+   {
+    "name": "교보악사일반형법인MMFClassC",
+    "v": -715
+   }
+  ],
+  "type_sales": [
+   {
+    "type": "MMF",
+    "sales": "엔에이치농협은행",
+    "v": 12366
+   },
+   {
+    "type": "MMF",
+    "sales": "엘에스증권",
+    "v": 9740
+   },
+   {
+    "type": "MMF",
+    "sales": "한국투자증권",
+    "v": 8171
+   },
+   {
+    "type": "MMF",
+    "sales": "하나증권",
+    "v": 7732
+   },
+   {
+    "type": "MMF",
+    "sales": "한화투자증권",
+    "v": 6409
+   },
+   {
+    "type": "MMF",
+    "sales": "KB증권",
+    "v": 5135
+   }
+  ],
+  "new": [
+   {
+    "name": "KCGI코리아종합채권증권투자신탁[채권]종류CF",
+    "mgr": "KCGI운용",
+    "v": 1000
+   },
+   {
+    "name": "미래에셋국민참여형국민성장혼합자산투자신탁(사모투자재간접형)종류C",
+    "mgr": "미래에셋운용",
+    "v": 721
+   },
+   {
+    "name": "삼성국민참여형국민성장혼합자산투자신탁[사모투자재간접형]_C1-e",
+    "mgr": "삼성운용",
+    "v": 669
+   },
+   {
+    "name": "삼성국민참여형국민성장혼합자산투자신탁[사모투자재간접형]_C1",
+    "mgr": "삼성운용",
+    "v": 663
+   },
+   {
+    "name": "KB국민참여형국민성장혼합자산투자신탁(사모투자재간접형)C",
+    "mgr": "KB운용",
+    "v": 621
+   },
+   {
+    "name": "미래에셋국민참여형국민성장혼합자산투자신탁(사모투자재간접형)종류C",
+    "mgr": "미래에셋운용",
+    "v": 619
+   }
+  ],
+  "new_count": 38
+ },
+ "asof": "2026.06.18",
+ "period": "06.11 → 06.18"
+};
+const K_JEJO = new Set([7472,7475,7473,7485,7486,7476,7478,7481,7482]);
+
+/* ---------- helpers ---------- */
+const S=1e8;
+const f1=x=>Math.round(x/S*10)/10;
+const cls=v=>v>0?'up':(v<0?'down':'');
+const sgn=v=>(v>0?'+':'')+v.toLocaleString();
+const won=n=>{const j=Math.floor(n/10000),e=n%10000;return (j>0?j+'조 ':'')+e.toLocaleString()+'억';};
+const shortFund=n=>String(n).replace(/증권 ?자?투자신탁/g,'').replace(/투자신탁/g,'').trim().slice(0,30);
+
+/* build column index map from a header row array */
+function colmap(headerRow){const m={};headerRow.forEach((h,i)=>{if(h!=null)m[String(h).trim()]=i;});return m;}
+
+/* ---------- WM parser ('오늘' 탭) ---------- */
+function parseWM(wb){
+  const sn = wb.SheetNames.includes('오늘') ? '오늘' : wb.SheetNames[wb.SheetNames.length-1];
+  const rows = XLSX.utils.sheet_to_json(wb.Sheets[sn], {header:1, raw:true});
+  // find header row containing '설정액증감'
+  let hr=-1; for(let i=0;i<Math.min(5,rows.length);i++){ if(rows[i] && rows[i].some(c=>String(c).trim()==='설정액증감')){hr=i;break;} }
+  if(hr<0) hr=1;
+  const C=colmap(rows[hr]);
+  const num=v=>{const n=parseFloat(v);return isNaN(n)?0:n;};
+  const data=[];
+  for(let i=hr+1;i<rows.length;i++){
+    const r=rows[i]; if(!r||r.length===0) continue;
+    if(String(r[C['제외']]).trim()==='제외') continue;
+    data.push(r);
+  }
+  const G=r=>String(r[C['연금']]).trim();
+  const sum=(arr,col)=>arr.reduce((a,r)=>a+num(r[C[col]]),0);
+
+  const wm={};
+  wm.total=Math.round(sum(data,'NAV')/S);
+  wm.retail=Math.round(data.filter(r=>G(r)==='일반').reduce((a,r)=>a+num(r[C['NAV']]),0)/S);
+  wm.pension=Math.round(data.filter(r=>G(r)==='연금').reduce((a,r)=>a+num(r[C['NAV']]),0)/S);
+  wm.flow_total=f1(sum(data,'설정액증감'));
+  wm.nav_chg_total=f1(sum(data,'NAV증감'));
+  wm.flow_retail=f1(data.filter(r=>G(r)==='일반').reduce((a,r)=>a+num(r[C['설정액증감']]),0));
+  wm.flow_pension=f1(data.filter(r=>G(r)==='연금').reduce((a,r)=>a+num(r[C['설정액증감']]),0));
+
+  // strat tag
+  const stratOf=r=>{
+    const pc=parseInt(r[C['펀드코드']]);
+    if(!isNaN(pc)&&K_JEJO.has(pc)) return 'K제조핵심';
+    let s=String(r[C['전략펀드']]).trim();
+    if(s.toLowerCase()==='k제조핵심') return 'K제조핵심';
+    if(s==='자품고') return '자사주품은고배당';
+    return s;
+  };
+  const agg=(keyFn,cols)=>{const m={};data.forEach(r=>{const k=keyFn(r);if(!m[k])m[k]={};cols.forEach(c=>m[k][c]=(m[k][c]||0)+num(r[C[c]]));});return m;};
+  const sg=agg(stratOf,['설정액증감','NAV증감','NAV']);
+  const order=['K제조핵심','K방산조선원전','자사주품은고배당','TDF','단기국공채','코리아밸류채권','헤라클레스'];
+  wm.strat=order.filter(n=>sg[n]).map(n=>({name:n,flow:f1(sg[n]['설정액증감']),nav_chg:f1(sg[n]['NAV증감']),nav:Math.round(sg[n]['NAV']/S)}));
+
+  const ag=agg(r=>String(r[C['제로인대분류']]).trim(),['설정액증감','NAV증감']);
+  wm.asset=Object.keys(ag).filter(k=>k&&k!=='0'&&Math.abs(ag[k]['설정액증감'])>3e8)
+    .map(k=>({name:k,flow:f1(ag[k]['설정액증감']),nav_chg:f1(ag[k]['NAV증감'])}))
+    .sort((a,b)=>a.flow-b.flow);
+
+  const sa=agg(r=>String(r[C['판매사명']]).trim(),['설정액증감']);
+  const saArr=Object.keys(sa).map(k=>({name:k,v:f1(sa[k]['설정액증감'])})).sort((a,b)=>a.v-b.v);
+  wm.sales_out=saArr.slice(0,3);
+  wm.sales_in=saArr.slice(-3).reverse();
+
+  const pe=agg(r=>G(r)==='연금'?String(r[C['연금세부유형']]).trim():'__x',['설정액증감']);
+  wm.pension_detail=Object.keys(pe).filter(k=>k!=='__x'&&Math.abs(pe[k]['설정액증감'])>1e8)
+    .map(k=>({name:k,v:f1(pe[k]['설정액증감'])})).sort((a,b)=>a.v-b.v);
+
+  const fd=agg(r=>String(r[C['펀드명']]).trim(),['설정액증감']);
+  const fdArr=Object.keys(fd).map(k=>({name:shortFund(k),v:f1(fd[k]['설정액증감'])})).sort((a,b)=>a.v-b.v);
+  wm.fund_out=fdArr.slice(0,5); wm.fund_in=fdArr.slice(-5).reverse();
+
+  // asof from sheetname or fallback
+  return wm;
+}
+
+/* ---------- KOFIA parser ---------- */
+function parseKO(wb){
+  const rows=XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]],{header:1,raw:true});
+  let hr=-1; for(let i=0;i<Math.min(5,rows.length);i++){ if(rows[i]&&rows[i].some(c=>String(c).trim()==='운용사')){hr=i;break;} }
+  if(hr<0)hr=1;
+  const C=colmap(rows[hr]);
+  const ci={mgr:C['운용사'],typ:C['대분류'],sales:C['판매사명'],diff:C['차이']!=null?C['차이']:C['차이좌수'],fund:C['펀드명'],setdate:C['설정일']};
+  const num=v=>{const n=parseFloat(v);return isNaN(n)?0:n;};
+  const data=[];
+  for(let i=hr+1;i<rows.length;i++){const r=rows[i];if(r&&r.length)data.push(r);}
+
+  const byType={},byTypeHW={},byFund={},byTS={},byNew={};
+  let hwTotal=0;
+  data.forEach(r=>{
+    const d=num(r[ci.diff]), t=String(r[ci.typ]).trim(), mgr=String(r[ci.mgr]).trim();
+    byType[t]=(byType[t]||0)+d;
+    if(mgr==='한화운용'){byTypeHW[t]=(byTypeHW[t]||0)+d; hwTotal+=d;}
+    const fn=String(r[ci.fund]).trim(); byFund[fn]=(byFund[fn]||0)+d;
+    const tsk=t+'||'+String(r[ci.sales]).trim(); byTS[tsk]=(byTS[tsk]||0)+d;
+    // new fund: 설정일 >= 2026-06-11
+    let sd=r[ci.setdate]; let isNew=false;
+    if(sd instanceof Date) isNew = sd>=new Date('2026-06-11');
+    else if(typeof sd==='number'){const ed=new Date(Date.UTC(1899,11,30)+sd*86400000); isNew=ed>=new Date('2026-06-11');}
+    else if(sd){const ed=new Date(sd); if(!isNaN(ed)) isNew=ed>=new Date('2026-06-11');}
+    if(isNew){const k=fn+'||'+mgr; byNew[k]=(byNew[k]||0)+d;}
+  });
+  const ko={};
+  ko.hanwha_total=Math.round(hwTotal);
+  ko.compare=['주식형','채권형','MMF','해외기타','해외주식형'].map(n=>({name:n,hanwha:Math.round(byTypeHW[n]||0),market:Math.round(byType[n]||0)}));
+  const fArr=Object.keys(byFund).map(k=>({name:k.slice(0,34),v:Math.round(byFund[k])})).sort((a,b)=>a.v-b.v);
+  ko.mkt_in=fArr.slice(-6).reverse(); ko.mkt_out=fArr.slice(0,5);
+  ko.type_sales=Object.keys(byTS).map(k=>{const[t,s]=k.split('||');return{type:t,sales:s,v:Math.round(byTS[k])};})
+    .sort((a,b)=>Math.abs(b.v)-Math.abs(a.v)).slice(0,6);
+  const nArr=Object.keys(byNew).map(k=>{const[n,m]=k.split('||');return{name:n.slice(0,34),mgr:m,v:Math.round(byNew[k])};}).sort((a,b)=>b.v-a.v);
+  ko.new=nArr.slice(0,6); ko.new_count=nArr.length;
+  return ko;
+}
+
+/* ---------- renderers ---------- */
+function li(name,sub,v){return `<li><span class="name">${name}${sub?`<span class="sub">${sub}</span>`:''}</span><span class="amt ${cls(v)}">${sgn(v)}</span></li>`;}
+
+function renderWM(wm){
+  document.getElementById('kTotal').innerHTML=won(wm.total)+'<span class="u"></span>';
+  document.getElementById('kRetail').innerHTML=won(wm.retail);
+  document.getElementById('kPension').innerHTML=won(wm.pension);
+  const sub=(flow,nav)=>`<span class="${cls(flow)}">설정 ${sgn(flow)}</span> · <span class="${cls(nav)}">평가 ${sgn(nav)}</span>`;
+  document.getElementById('kTotalSub').innerHTML=sub(wm.flow_total,wm.nav_chg_total);
+  document.getElementById('kRetailSub').innerHTML=`설정 <span class="${cls(wm.flow_retail)}">${sgn(wm.flow_retail)}</span>`;
+  document.getElementById('kPensionSub').innerHTML=`설정 <span class="${cls(wm.flow_pension)}">${sgn(wm.flow_pension)}</span>`;
+
+  // retail = inflow funds (MMF 등 +), pension = TDF/연금 funds (-)
+  const ri=wm.fund_in.filter(x=>!/TDF|연금|퇴직/.test(x.name)).slice(0,3);
+  document.getElementById('retailList').innerHTML = ri.length?ri.map(x=>li(x.name,'',x.v)).join(''):'<div class="empty">데이터 없음</div>';
+  const po=wm.fund_out.filter(x=>/TDF|연금|퇴직/.test(x.name)).slice(0,3);
+  const poFinal=po.length?po:wm.pension_detail.map(x=>({name:x.name,v:x.v}));
+  document.getElementById('pensionList').innerHTML=poFinal.map(x=>li(x.name,'',x.v)).join('');
+
+  const tdf=wm.strat.find(s=>s.name==='TDF');
+  document.getElementById('ins2').innerHTML=`연금 순유출 <b>${sgn(wm.flow_pension)}억</b>은 TDF 환매 주도 (TDF 설정 ${tdf?sgn(tdf.flow):'-'}억). 하나은행 TDF2045가 주간 최대 유출 펀드.`;
+
+  document.getElementById('salesIn').innerHTML=wm.sales_in.map(x=>li(x.name,'',x.v)).join('');
+  document.getElementById('salesOut').innerHTML=wm.sales_out.map(x=>li(x.name,'',x.v)).join('');
+
+  document.getElementById('stratBody').innerHTML=wm.strat.map(s=>
+    `<tr><td class="name">${s.name}</td><td class="${cls(s.flow)}">${sgn(s.flow)}</td><td class="${cls(s.nav_chg)}">${sgn(s.nav_chg)}</td><td style="color:var(--muted)">${s.nav.toLocaleString()}</td></tr>`).join('');
+  const kj=wm.strat.find(s=>s.name==='K제조핵심');
+  document.getElementById('ins4').innerHTML=`<b>국내주식 인사이트:</b> 코스피 9,000 사상 최고 구간이나 상승은 반도체 편중 — 제조·배당 테마는 차익실현 환매 우위. K제조핵심 설정 ${kj?sgn(kj.flow):'-'}억이나 평가는 시장 강세로 방어. 방산(K방산조선원전)만 순유입.`;
+
+  document.getElementById('assetBody').innerHTML=wm.asset.map(a=>
+    `<tr><td class="name">${a.name}</td><td class="${cls(a.flow)}">${sgn(a.flow)}</td><td class="${cls(a.nav_chg)}">${sgn(a.nav_chg)}</td></tr>`).join('');
+
+  buildReport(wm, window.__KO);
+}
+
+function renderKO(ko){
+  window.__KO=ko;
+  document.getElementById('cmpList').innerHTML=ko.compare.map(c=>
+    `<div class="cmp-bar"><span class="nm">${c.name}</span><span class="lab">한화</span><span class="v ${cls(c.hanwha)}">${sgn(c.hanwha)}</span><span class="lab">시장</span><span class="v ${cls(c.market)}">${sgn(c.market)}</span></div>`).join('');
+  document.getElementById('mktFunds').innerHTML=ko.mkt_in.map(x=>li(x.name,'',x.v)).join('');
+  document.getElementById('typeSales').innerHTML=ko.type_sales.map(x=>li(`[${x.type}] ${x.sales}`,'',x.v)).join('');
+  document.getElementById('newCnt').textContent=ko.new_count+'건';
+  document.getElementById('newFunds').innerHTML=ko.new.map(x=>li(x.name,x.mgr,x.v)).join('');
+  document.getElementById('cmt6').innerHTML=`<b>시장 vs 한화 진단:</b> 주식형(한화 ${sgn(ko.compare[0].hanwha)} vs 시장 ${sgn(ko.compare[0].market)})·채권형(한화 ${sgn(ko.compare[1].hanwha)} vs 시장 ${sgn(ko.compare[1].market)}) 순유출은 <b>한화 단독이 아닌 시장 전반 흐름</b>. 반기말 위험자산→MMF 자금이동(시장 MMF ${sgn(ko.compare[2].market)})의 일부이며, 한화 MMF 유입(${sgn(ko.compare[2].hanwha)})은 흐름은 동일하나 점유는 제한적. 신규설정은 국민참여형 국민성장펀드(사모재간접)가 주도.`;
+  if(window.__WM) buildReport(window.__WM, ko);
+}
+
+function buildReport(wm, ko){
+  const tdf=wm.strat.find(s=>s.name==='TDF')||{flow:0};
+  const kj=wm.strat.find(s=>s.name==='K제조핵심')||{flow:0,nav_chg:0};
+  const eq=wm.asset.find(a=>a.name==='주식형')||{flow:0}, bd=wm.asset.find(a=>a.name==='채권형')||{flow:0}, mmf=wm.asset.find(a=>a.name==='MMF')||{flow:0};
+  let mktLine = ko ? `<li><b>시장 비교:</b> 주식형·채권형 순유출은 시장 전반 흐름(시장 주식형 ${sgn(ko.compare[0].market)}, MMF +${ko.compare[2].market.toLocaleString()}) — 한화 단독 이탈 아님</li>` : '';
+  document.getElementById('report').innerHTML=`<ul>
+    <li>주간 합계 <b>${won(wm.total)}</b> (리테일 ${won(wm.retail)} / 연금 ${won(wm.pension)})</li>
+    <li>순설정 <b>${sgn(wm.flow_total)}억</b>이나 평가금액은 코스피 강세로 <b>${sgn(wm.nav_chg_total)}억</b> — 시장 상승이 순유출 상쇄</li>
+    <li>리테일: MMF 위주 유입 / 연금: <b>TDF ${sgn(tdf.flow)}억</b> 환매(하나은행 TDF2045 −166)</li>
+    <li>판매사: ${wm.sales_out.slice(0,2).map(x=>x.name+' '+sgn(x.v)).join(', ')} / ${wm.sales_in[0].name} ${sgn(wm.sales_in[0].v)}</li>
+    <li>전략펀드: K제조핵심 설정 ${sgn(kj.flow)}(평가 ${sgn(kj.nav_chg)}) / 방산만 순유입</li>
+    <li>자산별: 주식형 ${sgn(eq.flow)}, 채권형 ${sgn(bd.flow)} / MMF ${sgn(mmf.flow)}</li>
+    ${mktLine}
+    <li><b>관전 포인트:</b> 시장 강세 ≠ 자금 유입, 반도체 외 테마(제조·배당) 이탈 방어 필요</li>
+  </ul>`;
+}
+
+/* default market commentary (편집 가능, 시장맥락은 수동) */
+function setDefaultCommentary(){
+  document.getElementById('cmt1').innerHTML=`코스피는 6/18 <b>2.25% 상승한 9,064p로 9,000선 첫 돌파·사상 최고치</b>(월간 +24.6%). 다만 상승은 SK하이닉스·삼성전자 등 <b>AI 반도체 편중</b>으로, 한화 주력인 제조·배당 테마는 차익실현 환매 우위. 그 결과 순설정은 감소했으나 평가금액은 시장 강세로 크게 증가. → <b>시장 상승 ≠ 한화 자금 유입</b>, 반도체 외 테마 자금 이탈 방어가 관전 포인트.`;
+}
+
+/* ---------- file handling ---------- */
+function readFile(input, kind){
+  const file=input.files[0]; if(!file) return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    try{
+      const wb=XLSX.read(new Uint8Array(e.target.result),{type:'array',cellDates:true});
+      if(kind==='wm'){window.__WM=parseWM(wb);renderWM(window.__WM);
+        document.getElementById('dropWM').classList.add('ok');document.getElementById('wmName').textContent='✓ '+file.name.slice(0,22);}
+      else{const ko=parseKO(wb);renderKO(ko);
+        document.getElementById('dropKO').classList.add('ok');document.getElementById('koName').textContent='✓ '+file.name.slice(0,22);}
+    }catch(err){alert('파싱 오류: '+err.message);}
+  };
+  reader.readAsArrayBuffer(file);
+}
+document.getElementById('fileWM').addEventListener('change',e=>readFile(e.target,'wm'));
+document.getElementById('fileKO').addEventListener('change',e=>readFile(e.target,'ko'));
+
+document.getElementById('copy').addEventListener('click',function(){
+  const txt=document.getElementById('report').innerText.split('\n').map(l=>l.trim()).filter(Boolean).map(l=>/^[•\-]/.test(l)?l:'• '+l).join('\n');
+  navigator.clipboard.writeText(txt).then(()=>{this.textContent='✓ 복사됨';this.classList.add('ok');setTimeout(()=>{this.textContent='📋 보고멘트 복사';this.classList.remove('ok');},1600);});
+});
+
+/* ---------- export (PDF / IMG), 보고멘트(7) 제외 ---------- */
+async function capture(){
+  document.body.classList.add('exporting');
+  const target=document.querySelector('.wrap');
+  await new Promise(r=>setTimeout(r,60));
+  const canvas=await html2canvas(target,{scale:2,backgroundColor:'#f6f4ef',useCORS:true,logging:false,windowWidth:target.scrollWidth});
+  document.body.classList.remove('exporting');
+  return canvas;
+}
+function stamp(){const d=(window.__WM&&TODAY_DATA.asof)||TODAY_DATA.asof||'';return ('WM주간수탁고_'+d).replace(/[.\/ ]/g,'');}
+
+document.getElementById('btnImg').addEventListener('click',async function(){
+  const b=this;b.disabled=true;const o=b.textContent;b.textContent='⏳ 생성 중…';
+  try{const canvas=await capture();const a=document.createElement('a');
+    a.download=stamp()+'.png';a.href=canvas.toDataURL('image/png');a.click();
+  }catch(e){alert('이미지 저장 오류: '+e.message);}
+  b.textContent=o;b.disabled=false;
+});
+
+
+
+/* ---------- initial load (baked-in today data) ---------- */
+(function init(){
+  document.getElementById('asof').textContent=TODAY_DATA.asof;
+  document.getElementById('period').textContent=TODAY_DATA.period;
+  setDefaultCommentary();
+  window.__WM=TODAY_DATA.wm; window.__KO=TODAY_DATA.kofia;
+  renderKO(TODAY_DATA.kofia);
+  renderWM(TODAY_DATA.wm);
+})();
+</script>
+</body>
+</html>
