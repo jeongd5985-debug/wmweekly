@@ -177,6 +177,15 @@
   .modal-note{font-size:11.5px;color:#8a4318;background:var(--accent-soft);border-radius:8px;
     padding:9px 12px;margin-top:12px;line-height:1.55}
   .modal-empty{color:#bcae93;font-style:italic;font-size:13px;padding:24px 0;text-align:center}
+  /* ===== 드릴다운 모달 내부 탭 ===== */
+  .drill-tabs{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap}
+  .drill-tab{font:inherit;font-size:12px;font-weight:700;border:1px solid var(--line);background:#fff;color:var(--muted);border-radius:7px;padding:6px 14px;cursor:pointer;transition:.12s}
+  .drill-tab:hover{border-color:var(--accent);color:var(--accent)}
+  .drill-tab.active{background:var(--accent-soft);border-color:var(--accent);color:var(--accent)}
+  .drill-sub-panel{display:none}.drill-sub-panel.show{display:block}
+  .drill-group-hd{font-size:11.5px;font-weight:800;color:var(--muted);margin:12px 0 6px;padding-bottom:4px;border-bottom:1px solid var(--line)}
+  .drill-group-hd:first-child{margin-top:0}
+
 </style>
 </head>
 <body>
@@ -1025,6 +1034,42 @@ function liDrill(dim,name,v){
 }
 const DIM_LABEL={sales:'판매사',strat:'전략펀드',asset:'자산분류 (제로인 대분류)',pen:'연금구분',center:'센터',retire:'퇴직연금구분',pdetail:'연금세부유형'};
 const DIM_HEAD ={sales:'판매사',strat:'전략펀드',asset:'대분류',pen:'연금구분',center:'센터',retire:'퇴직연금구분',pdetail:'연금세부유형'};
+function makeSumBar(rows){
+  let tf=0,tn=0,tv=0; rows.forEach(r=>{tf+=r.flow;tn+=r.nav_chg;tv+=r.nav;});
+  return `<div class="modal-sum">`+
+    `<div class="it"><div class="l">설정액 증감</div><div class="vv ${cls(tf)}">${sgn(f1r(tf))}</div></div>`+
+    `<div class="it"><div class="l">NAV 증감</div><div class="vv ${cls(tn)}">${sgn(f1r(tn))}</div></div>`+
+    `<div class="it"><div class="l">NAV 잔액</div><div class="vv">${Math.round(tv).toLocaleString()}</div></div>`+
+    `<div class="it"><div class="l">펀드수</div><div class="vv">${rows.length}</div></div></div>`;
+}
+function makeFundTable(rows,showCol){
+  const colLabel={sales:'판매사',strat:'전략펀드',asset:'자산군'};
+  const hExtra=showCol?`<th class="sl">${colLabel[showCol]||showCol}</th>`:'';
+  const trs=rows.map(r=>`<tr><td class="fn">${r.fund}</td>${showCol?`<td class="sl">${r[showCol]||''}</td>`:''}<td class="${cls(r.flow)}">${sgn(f1r(r.flow))}</td><td class="${cls(r.nav_chg)}">${sgn(f1r(r.nav_chg))}</td><td style="color:var(--muted)">${Math.round(r.nav).toLocaleString()}</td></tr>`).join('');
+  return `<table><thead><tr><th>펀드명</th>${hExtra}<th>설정액 증감</th><th>NAV 증감</th><th>NAV 잔액</th></tr></thead><tbody>${trs}</tbody></table>`;
+}
+function makeGroupedTable(rows,groupDim,showDim){
+  const groups={};
+  rows.forEach(r=>{const k=r[groupDim]||'기타';if(!groups[k])groups[k]=[];groups[k].push(r);});
+  const keys=Object.keys(groups).sort((a,b)=>{
+    const sa=groups[a].reduce((s,r)=>s+r.flow,0);
+    const sb=groups[b].reduce((s,r)=>s+r.flow,0);
+    return sa-sb;
+  });
+  return keys.map(k=>{
+    const gr=groups[k].slice().sort((a,b)=>a.flow-b.flow);
+    let tf=0; gr.forEach(r=>tf+=r.flow);
+    return `<div class="drill-group-hd">${k}<span style="font-weight:600;color:var(--muted);font-size:11px;margin-left:8px">설정 합계 <span class="${cls(tf)}">${sgn(f1r(tf))}</span></span></div>`+makeFundTable(gr,showDim);
+  }).join('');
+}
+function makeDrillTabs(tabs,activeIdx){
+  return `<div class="drill-tabs">${tabs.map((t,i)=>`<button class="drill-tab${i===activeIdx?' active':''}" onclick="switchDrillTab(this,${i})">${t}</button>`).join('')}</div>`;
+}
+function switchDrillTab(btn,idx){
+  const body=document.getElementById('drillBody');
+  body.querySelectorAll('.drill-tab').forEach((b,i)=>b.classList.toggle('active',i===idx));
+  body.querySelectorAll('.drill-sub-panel').forEach((p,i)=>p.classList.toggle('show',i===idx));
+}
 function openDrill(dim,key,scope){
   const wm=window.__WM||{};
   let base=(wm._rows||[]);
@@ -1033,20 +1078,26 @@ function openDrill(dim,key,scope){
   document.getElementById('drillTitle').textContent=key;
   document.getElementById('drillSub').textContent=`${scope==='retireHQ'?'[퇴직연금본부] ':''}${DIM_LABEL[dim]||dim} 상세 · ${rows.length}개 펀드`;
   const body=document.getElementById('drillBody');
+  const sampleNote=wm._sample?'<div class="modal-note">※ 내장 샘플 데이터입니다. 엑셀 업로드 시 실제 전체 펀드가 표시됩니다.</div>':'';
   if(!rows.length){
     body.innerHTML=`<div class="modal-empty">표시할 펀드 상세가 없습니다.<br>엑셀 파일을 업로드하면 보유 펀드 전체가 표시됩니다.</div>`;
-  }else{
-    let tf=0,tn=0,tv=0; rows.forEach(r=>{tf+=r.flow;tn+=r.nav_chg;tv+=r.nav;});
-    const showSales = dim!=='sales';
-    const trs=rows.map(r=>`<tr><td class="fn">${r.fund}</td>${showSales?`<td class="sl">${r.sales}</td>`:''}<td class="${cls(r.flow)}">${sgn(f1r(r.flow))}</td><td class="${cls(r.nav_chg)}">${sgn(f1r(r.nav_chg))}</td><td style="color:var(--muted)">${Math.round(r.nav).toLocaleString()}</td></tr>`).join('');
-    body.innerHTML=
-      `<div class="modal-sum">`+
-      `<div class="it"><div class="l">설정액 증감 합계</div><div class="vv ${cls(tf)}">${sgn(f1r(tf))}</div></div>`+
-      `<div class="it"><div class="l">NAV 증감 합계</div><div class="vv ${cls(tn)}">${sgn(f1r(tn))}</div></div>`+
-      `<div class="it"><div class="l">NAV 잔액 합계</div><div class="vv">${Math.round(tv).toLocaleString()}</div></div>`+
-      `<div class="it"><div class="l">펀드 수</div><div class="vv">${rows.length}</div></div></div>`+
-      `<table><thead><tr><th>펀드명</th>${showSales?'<th class="sl">판매사</th>':''}<th>설정액 증감</th><th>NAV 증감</th><th>NAV 잔액</th></tr></thead><tbody>${trs}</tbody></table>`+
-      (wm._sample?`<div class="modal-note">※ 기본 내장 데이터에는 <b>전략펀드 상세만</b> 포함되어 있어 합계가 위 표와 다를 수 있습니다. 실제 엑셀 파일을 업로드하면 해당 분류의 <b>모든 보유 펀드</b>가 표시되고 합계도 정확히 일치합니다.`+(dim==='sales'?` (판매사 단위 펀드 분해는 업로드 시 제공)`:'')+`</div>`:'');
+  } else if(dim==='sales'){
+    /* 판매사 드릴다운: 전체 / 전략펀드별 / 자산군별 */
+    body.innerHTML=makeDrillTabs(['전체 펀드','전략펀드별','자산군별'],0)+
+      `<div class="drill-sub-panel show">${makeSumBar(rows)}${makeFundTable(rows,'strat')}</div>`+
+      `<div class="drill-sub-panel">${makeSumBar(rows)}${makeGroupedTable(rows,'strat',null)}</div>`+
+      `<div class="drill-sub-panel">${makeSumBar(rows)}${makeGroupedTable(rows,'asset',null)}</div>`+
+      sampleNote;
+  } else if(dim==='strat'){
+    /* 전략펀드 드릴다운: 전체 / 자산군별 / 판매사별 */
+    body.innerHTML=makeDrillTabs(['전체 펀드','자산군별','판매사별'],0)+
+      `<div class="drill-sub-panel show">${makeSumBar(rows)}${makeFundTable(rows,'sales')}</div>`+
+      `<div class="drill-sub-panel">${makeSumBar(rows)}${makeGroupedTable(rows,'asset','sales')}</div>`+
+      `<div class="drill-sub-panel">${makeSumBar(rows)}${makeGroupedTable(rows,'sales','asset')}</div>`+
+      sampleNote;
+  } else {
+    const showSales=dim!=='sales';
+    body.innerHTML=makeSumBar(rows)+makeFundTable(rows,showSales?'sales':null)+sampleNote;
   }
   document.getElementById('drillOv').classList.add('show');
 }
@@ -1409,114 +1460,59 @@ function encState(){
   EDITABLE_IDS.forEach(id=>{const el=document.getElementById(id); if(el) state[id]=el.innerHTML;});
   return encodeURIComponent(btoa(unescape(encodeURIComponent(JSON.stringify(state)))));
 }
-function applyStateFromHash(){
+async function applyStateFromHash(){
+  /* 1) Upstash share ID (?share=xxx) */
+  const sp=new URLSearchParams(location.search);
+  const shareId=sp.get('share');
+  if(shareId){
+    try{
+      const res=await fetch('/api/share/load?id='+encodeURIComponent(shareId));
+      if(res.ok){
+        const {data}=await res.json();
+        const state=JSON.parse(data);
+        Object.keys(state).forEach(id=>{if(EDITABLE_IDS.indexOf(id)>=0)localStorage.setItem(LS_PREFIX+id,state[id]);});
+      }
+    }catch(e){}
+    return;
+  }
+  /* 2) 해시 방식 (#s=xxx) 폴백 */
   const m=(location.hash||'').match(/[#&]s=([^&]+)/);
   if(!m) return;
   try{
     const json=decodeURIComponent(escape(atob(decodeURIComponent(m[1]))));
     const state=JSON.parse(json);
-    Object.keys(state).forEach(id=>{ if(EDITABLE_IDS.indexOf(id)>=0) localStorage.setItem(LS_PREFIX+id,state[id]); });
+    Object.keys(state).forEach(id=>{if(EDITABLE_IDS.indexOf(id)>=0)localStorage.setItem(LS_PREFIX+id,state[id]);});
   }catch(e){}
 }
 document.getElementById('btnLink').addEventListener('click',async function(){
   const b=this;const o=b.textContent;
+  b.disabled=true;b.textContent='⏳ 저장 중…';
   try{
-    const url=location.origin+location.pathname+'#s='+encState();
-    try{ await navigator.clipboard.writeText(url); }
-    catch(_){ const ta=document.createElement('textarea');ta.value=url;document.body.appendChild(ta);ta.select();document.execCommand('copy');ta.remove(); }
-    b.textContent='✓ 링크 복사됨';
-    setTimeout(()=>{b.textContent=o;},1500);
-  }catch(e){ alert('링크 생성 오류: '+e.message); b.textContent=o; }
+    const state={};
+    EDITABLE_IDS.forEach(id=>{const el=document.getElementById(id);if(el)state[id]=el.innerHTML;});
+    const res=await fetch('/api/share/save',{
+      method:'POST',
+      headers:{'content-type':'application/json'},
+      body:JSON.stringify({data:JSON.stringify(state)})
+    });
+    if(!res.ok) throw new Error('저장 실패 '+res.status);
+    const {id}=await res.json();
+    const url=location.origin+location.pathname+'?share='+id;
+    try{await navigator.clipboard.writeText(url);}
+    catch(_){const ta=document.createElement('textarea');ta.value=url;document.body.appendChild(ta);ta.select();document.execCommand('copy');ta.remove();}
+    b.textContent='✓ 링크 복사됨!';
+    setTimeout(()=>{b.textContent=o;b.disabled=false;},2500);
+  }catch(e){
+    /* 폴백: URL 해시 방식 */
+    try{
+      const url=location.origin+location.pathname+'#s='+encState();
+      try{await navigator.clipboard.writeText(url);}catch(_){}
+      b.textContent='✓ 복사됨(로컬)';
+    }catch(_){b.textContent=o;}
+    b.disabled=false;
+    setTimeout(()=>{b.textContent=o;},2000);
+  }
 });
-
-/* ---------- AI 시장 테마 & 한화 대응 분석 (Claude API) ---------- */
-const AI_KEY_LS = 'wm-dash-anthropic-key';
-(function initAIKey(){
-  const saved = localStorage.getItem(AI_KEY_LS);
-  if(saved){ const k=document.getElementById('aiKey'); const c=document.getElementById('aiSaveKey'); if(k){k.value=saved;} if(c){c.checked=true;} }
-})();
-
-function buildAIContext(){
-  const wm = window.__WM || {};
-  const ko = window.__KO || {};
-  const v = koView(ko);
-  const ctx = {
-    기준: { asof: TODAY_DATA.asof, period: TODAY_DATA.period },
-    한화WM_주간수탁고: {
-      총수탁고_억: wm.total, 리테일_억: wm.retail, 연금_억: wm.pension,
-      순설정증감_억: wm.flow_total, 평가액증감_억: wm.nav_chg_total,
-      리테일순설정_억: wm.flow_retail, 연금순설정_억: wm.flow_pension,
-      전략펀드별: wm.strat, 자산분류별: wm.asset,
-      판매사_유입상위: wm.sales_in, 판매사_유출상위: wm.sales_out,
-      펀드_유입상위: wm.fund_in, 펀드_유출상위: wm.fund_out,
-      연금세부: wm.pension_detail,
-      퇴직연금사업본부_전략펀드별: (function(){
-        const rows=(wm._rows||[]).filter(r=>r.dept==='퇴직연금사업본부');
-        return rows.length?aggBy(rows,'strat').map(a=>({name:a.name,flow:a.flow,nav_chg:a.nav_chg,nav:a.nav})):[];
-      })()
-    },
-    시장_협회기준: {
-      슬라이서_적용: { MMF제외: MKT_FILTER.exMMF, 법인MMF제외: MKT_FILTER.exCorpMMF, ETF: (MKT_FILTER.etfMode==='only'?'ETF만':'ETF제외') },
-      한화_협회순증감_억: v.hanwha_total,
-      대분류_한화vs시장: v.compare,
-      법인MMF_별도: v.mmf_corp,
-      시장_대분류_순증감: v.by_type,
-      시장_주요순설정펀드: v.mkt_in,
-      시장_주요순환매펀드: v.mkt_out,
-      시장_판매사별순증감: v.by_sales || [],
-      대분류x판매사_주요: v.type_sales,
-      신규설정_대표펀드그룹: v.new_grouped.arr.slice(0,12),
-      신규설정_건수: v.new_count
-    }
-  };
-  return ctx;
-}
-
-function aiPrompt(ctx){
-  return [
-'당신은 한화자산운용 WM마케팅본부의 펀드 자금흐름 분석가입니다.',
-'아래 데이터는 같은 주간(period)의 ① 한화 WM 주간 수탁고와 ② 협회(시장 전체) 판매채널 자금흐름입니다. 단위는 모두 억원이며, 양수=순유입/증가, 음수=순유출/감소 입니다.',
-'',
-'분석 데이터(JSON):',
-'```json',
-JSON.stringify(ctx, null, 1),
-'```',
-'',
-'다음 구조로, 데이터 수치를 반드시 근거로 인용하며 한국어로 간결하게(전체 600~900자) 분석하세요. 마크다운으로 ## 제목, - 불릿, **굵게**를 사용하세요.',
-'',
-'## 시장 집중 테마',
-'- 시장(협회) 데이터에서 자금이 몰리는 테마/자산군 2~3개를 수치 근거와 함께 식별',
-'',
-'## 한화 WM 대응 평가',
-'- 시장 집중 테마 대비 한화의 자금흐름이 같은 방향인지/역행인지 한 줄 결론 + 근거 수치',
-'',
-'## 강점',
-'- 한화가 시장 대비 잘 방어/유입되는 영역 (구체 펀드·전략·판매사 명시)',
-'',
-'## 약점',
-'- 시장은 유입인데 한화는 유출이거나, 한화 주력에서 자금이 빠지는 영역',
-'',
-'## 액션 제안',
-'- WM마케팅 관점의 실행 제안 2~3가지'
-  ].join('\n');
-}
-
-function mdToHtml(md){
-  const esc=s=>s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-  const lines = md.split('\n'); let out=[]; let inUl=false;
-  const inline = t => esc(t)
-      .replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>')
-      .replace(/(순유입|유입|증가|방어)/g,'<span class="badge-good">$1</span>')
-      .replace(/(순유출|유출|감소|이탈)/g,'<span class="badge-bad">$1</span>');
-  const closeUl=()=>{ if(inUl){out.push('</ul>'); inUl=false;} };
-  lines.forEach(raw=>{
-    const line=raw.trim();
-    if(!line){ closeUl(); return; }
-    let m;
-    if(m=line.match(/^#{1,6}\s+(.*)$/)){ closeUl(); out.push('<h4>'+inline(m[1])+'</h4>'); return; }
-    if(m=line.match(/^[-*•]\s+(.*)$/)){ if(!inUl){out.push('<ul>');inUl=true;} out.push('<li>'+inline(m[1])+'</li>'); return; }
-    closeUl(); out.push('<p>'+inline(line)+'</p>');
-  });
   closeUl();
   return out.join('');
 }
@@ -1556,8 +1552,8 @@ async function runAIAnalysis(){
 document.getElementById('aiRun').addEventListener('click',runAIAnalysis);
 
 /* ---------- initial load (baked-in today data) ---------- */
-(function init(){
-  applyStateFromHash();
+(async function init(){
+  await applyStateFromHash();
   applyEditable('asof', TODAY_DATA.asof);
   applyEditable('period', TODAY_DATA.period);
   setDefaultCommentary();
