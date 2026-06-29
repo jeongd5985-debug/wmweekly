@@ -23,6 +23,48 @@
     background:#fbf8f1;transition:.15s;display:flex;align-items:center;gap:9px}
   .drop:hover{border-color:var(--accent);background:var(--accent-soft)}
   .drop.ok{border-color:var(--up);background:var(--up-soft)}
+  .drop.drag{border-color:var(--accent);background:var(--accent-soft);box-shadow:0 0 0 3px var(--accent-soft)}
+  /* ===== 시장 슬라이서 / 시장vs한화 ===== */
+  .slicer{display:flex;align-items:center;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+  .slicer-lab{font-size:11.5px;font-weight:800;color:var(--muted)}
+  .chip{font:inherit;font-size:12px;font-weight:700;border:1px solid var(--line);background:#fff;color:var(--muted);border-radius:7px;padding:6px 12px;cursor:pointer;transition:.12s}
+  .chip:hover{border-color:var(--accent)}
+  .chip.active{background:var(--accent-soft);border-color:var(--accent);color:var(--accent)}
+  .slicer-hint{font-size:11px;color:var(--muted)}
+  .grp-badge{display:inline-block;font-size:10px;font-weight:800;background:var(--accent-soft);color:var(--accent);border-radius:5px;padding:1px 6px;margin-left:4px}
+  .ev{display:inline-block;font-size:11px;font-weight:800;border-radius:5px;padding:2px 8px;white-space:nowrap}
+  .ev-good{background:var(--up-soft);color:var(--up)}
+  .ev-bad{background:#fce8e6;color:#c5221f}
+  .ev-warn{background:#fef3e0;color:#9a5b00}
+  .ev-neu{background:#eef0f2;color:#5f6368}
+  td.dir{color:var(--muted);font-weight:700;font-size:11.5px}
+  .theme-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:11px}
+  @media(max-width:720px){.theme-cards{grid-template-columns:1fr}}
+  .tcard{border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:9px;padding:11px 13px;background:#fbfaf7}
+  .tcard.good{border-left-color:var(--up)}
+  .tcard.bad{border-left-color:#c5221f}
+  .tcard .tc-h{font-size:11.5px;font-weight:800;color:var(--muted);margin-bottom:5px}
+  .tcard .tc-b{font-size:13px;font-weight:700;line-height:1.5}
+  /* ===== 분류별 드릴다운 컨트롤 ===== */
+  .dd-ctrl{display:flex;align-items:center;gap:10px;margin-bottom:11px;flex-wrap:wrap}
+  .dd-ctrl label{font-size:12px;font-weight:800;color:var(--muted)}
+  .dd-ctrl select{font:inherit;font-size:12.5px;font-weight:700;border:1px solid var(--line);border-radius:8px;padding:7px 11px;background:#fff;color:var(--ink);cursor:pointer}
+  .dd-ctrl select:hover{border-color:var(--accent)}
+  .dd-hint{font-size:11.5px;color:var(--muted);font-weight:600}
+  /* ===== AI 분석 섹션 ===== */
+  .ai-cfg{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:12px}
+  .ai-cfg input,.ai-cfg select{font:inherit;font-size:12.5px;border:1px solid var(--line);border-radius:8px;padding:8px 10px;background:#fff;color:var(--ink)}
+  .ai-cfg input#aiKey{flex:1;min-width:220px}
+  .ai-cfg .hint{font-size:11px;color:var(--muted);flex-basis:100%}
+  .ai-run{font:inherit;font-size:12.5px;font-weight:700;border:0;border-radius:8px;padding:9px 16px;background:var(--accent);color:#fff;cursor:pointer}
+  .ai-run:hover{filter:brightness(.96)} .ai-run[disabled]{opacity:.55;cursor:wait}
+  .ai-out{border:1px solid var(--line);border-radius:10px;padding:14px 16px;background:#fbf9f4;min-height:60px;font-size:13px;line-height:1.7}
+  .ai-out h4{font-size:13.5px;color:var(--accent);margin:14px 0 6px;font-weight:800}
+  .ai-out h4:first-child{margin-top:0}
+  .ai-out ul{margin:4px 0 4px 18px} .ai-out li{margin:2px 0}
+  .ai-out .ph{color:var(--muted)}
+  .ai-out strong{color:var(--ink);font-weight:800}
+  .badge-good{color:var(--up);font-weight:800} .badge-bad{color:var(--down);font-weight:800}
   .drop .ic{font-size:17px}
   .drop .t{font-size:12.5px;font-weight:700}
   .drop .s{font-size:11px;color:var(--muted)}
@@ -70,6 +112,9 @@
   .note{background:#fbfaf7;border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:8px;padding:11px 14px;font-size:13px;color:#4a463d;outline:none}
   .note:focus{background:#fff;box-shadow:0 0 0 3px var(--accent-soft)}
   [contenteditable]:focus{outline:none}
+  .editable-date{cursor:text;border-bottom:1px dotted rgba(243,115,33,.6);border-radius:3px;padding:0 2px}
+  .editable-date:hover{background:var(--accent-soft)}
+  .editable-date:focus{background:#fff;box-shadow:0 0 0 2px rgba(243,115,33,.4)}
   .insight{display:flex;gap:9px;align-items:flex-start;background:var(--accent-soft);border-radius:9px;padding:10px 13px;margin-top:11px;font-size:12.5px;font-weight:600;color:#8a4318}
   .insight .ic{font-weight:800;color:var(--accent)}
   .insight span[contenteditable]{outline:none;border-radius:4px;flex:1}
@@ -81,6 +126,10 @@
   .cmp-bar .nm{width:70px;font-weight:700}
   .cmp-bar .v{width:74px;text-align:right;font-weight:800;font-variant-numeric:tabular-nums}
   .cmp-bar .lab{font-size:10.5px;color:var(--muted);width:34px}
+  .mmf-corp{margin-top:9px;padding:8px 10px;background:#fdf4e8;border:1px dashed #e8c79a;border-radius:7px;display:flex;align-items:center;gap:8px;font-size:11.5px}
+  .mmf-corp .lab{font-weight:800;color:#8a4318;font-size:11px}
+  .mmf-corp .v{margin-left:auto;font-weight:800;font-variant-numeric:tabular-nums}
+  .mmf-corp .sub{color:var(--muted);font-size:10.5px}
 
   section.report{background:var(--ink);border-color:var(--ink)}
   section.report .sh{color:#fff} section.report .sh .n{background:var(--accent)}
@@ -97,6 +146,37 @@
   .xbtn:active{transform:translateY(1px)}
   .xbtn[disabled]{opacity:.55;cursor:wait}
   .exporting .no-export{display:none!important}
+
+  /* ===== drill-down modal (added) ===== */
+  .clickable{cursor:pointer}
+  ul.items li.clickable:hover{background:var(--accent-soft);border-radius:6px;margin:0 -6px;padding-left:6px;padding-right:6px}
+  tr.clickable{cursor:pointer;transition:.12s}
+  tr.clickable:hover>td{background:var(--accent-soft)}
+  .chev{font-size:10px;color:var(--accent);margin-left:6px;font-weight:700;opacity:.7}
+  td .chev{opacity:0;transition:.12s} tr.clickable:hover td .chev{opacity:.7}
+  .modal-ov{position:fixed;inset:0;background:rgba(35,33,28,.46);display:none;align-items:flex-start;
+    justify-content:center;z-index:1000;padding:38px 16px;overflow:auto}
+  .modal-ov.show{display:flex}
+  .modal{background:#fff;border-radius:14px;max-width:720px;width:100%;max-height:86vh;display:flex;
+    flex-direction:column;box-shadow:0 24px 70px rgba(0,0,0,.28);overflow:hidden}
+  .modal-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;
+    padding:16px 20px;border-bottom:1px solid var(--line);background:#fbfaf7}
+  .modal-head h3{font-size:16px;font-weight:800;letter-spacing:-.4px}
+  .modal-head .mh-sub{font-size:11.5px;color:var(--muted);font-weight:600;margin-top:3px}
+  .modal-x{background:#efece4;border:none;width:30px;height:30px;border-radius:8px;font-size:15px;
+    cursor:pointer;color:var(--muted);flex:none;line-height:1}
+  .modal-x:hover{background:var(--down-soft);color:var(--down)}
+  .modal-body{padding:14px 20px 20px;overflow:auto}
+  .modal-sum{display:flex;gap:22px;flex-wrap:wrap;padding:2px 0 14px;border-bottom:1px solid var(--line);margin-bottom:10px}
+  .modal-sum .it .l{font-size:10.5px;color:var(--muted);font-weight:600}
+  .modal-sum .it .vv{font-size:17px;font-weight:800;font-variant-numeric:tabular-nums;letter-spacing:-.5px}
+  .modal table{font-size:12.5px} .modal th,.modal td{padding:7px 8px}
+  .modal td.fn{font-weight:700;max-width:300px}
+  .modal td.sl{color:var(--muted);font-size:11.5px;text-align:left}
+  .modal th.sl{text-align:left}
+  .modal-note{font-size:11.5px;color:#8a4318;background:var(--accent-soft);border-radius:8px;
+    padding:9px 12px;margin-top:12px;line-height:1.55}
+  .modal-empty{color:#bcae93;font-style:italic;font-size:13px;padding:24px 0;text-align:center}
 </style>
 </head>
 <body>
@@ -119,10 +199,14 @@
   <header>
     <div>
       <h1><span class="bar"></span>WM마케팅본부 주간 수탁고 리뷰</h1>
-      <div class="period">기준일 <b id="asof">-</b> · 비교기간 <b id="period">-</b> · 단위 억원</div>
+      <div class="period">기준일 <b id="asof" class="editable-date" contenteditable="true" spellcheck="false" title="클릭해서 기준일 수정">-</b> · 비교기간 <b id="period" class="editable-date" contenteditable="true" spellcheck="false" title="클릭해서 비교기간 수정">-</b> · 단위 억원</div>
     </div>
     <div class="toolbar no-export">
-      <span class="edit-hint">✎ 클릭해서 수정</span>
+      <span class="edit-hint">✎ 클릭해서 수정 (자동저장)</span>
+      <span id="saveFlash" style="opacity:0;transition:opacity .25s;font-size:11px;color:var(--up);font-weight:700">✓ 저장됨</span>
+      <button class="xbtn" id="btnReset" title="모든 코멘트를 자동 생성 기본값으로">↻ 초기화</button>
+      <button class="xbtn" id="btnLink" title="현재 편집 상태를 담은 공유 링크 복사">🔗 링크 생성</button>
+      <button class="xbtn" id="btnPDF" title="AI 분석 섹션 제외하고 PDF 저장">📄 PDF 저장</button>
       <button class="xbtn" id="btnImg">🖼️ 이미지 저장</button>
     </div>
   </header>
@@ -167,37 +251,143 @@
   </section>
 
   <section>
-    <div class="sh"><span class="n">6</span> 시장 전체 트렌드 vs 한화 <small>협회 기준 · 억원</small></div>
-    <div id="koContent">
-      <div class="two">
-        <div class="subcard">
-          <h4>제로인 대분류: 한화 vs 시장전체</h4>
-          <div id="cmpList"></div>
-        </div>
-        <div class="subcard">
-          <h4>주간 시장 주요 순설정 펀드</h4>
-          <ul class="items" id="mktFunds"></ul>
-        </div>
-      </div>
-      <div class="two" style="margin-top:13px">
-        <div class="subcard"><h4>제로인유형 × 판매사 (절댓값 상위)</h4><ul class="items" id="typeSales"></ul></div>
-        <div class="subcard"><h4>신규설정 펀드 <span class="tag" id="newCnt"></span></h4><ul class="items" id="newFunds"></ul></div>
-      </div>
-      <div class="note" id="cmt6" contenteditable="true" style="margin-top:13px"></div>
+    <div class="sh"><span class="n">6</span> 분류별 드릴다운 <small>기준 선택 → 행 클릭 시 구성 펀드 상세</small></div>
+    <div class="dd-ctrl">
+      <label for="ddDim">분류 기준</label>
+      <select id="ddDim">
+        <option value="asset">제로인 대분류</option>
+        <option value="strat">전략펀드</option>
+        <option value="sales">판매사</option>
+        <option value="pen">연금구분</option>
+        <option value="center">센터</option>
+        <option value="retire">퇴직연금구분</option>
+        <option value="pdetail">연금세부유형</option>
+      </select>
+      <span class="dd-hint" id="ddHint"></span>
     </div>
+    <table><thead><tr><th id="ddColHead">분류</th><th>설정액 증감</th><th>NAV 증감</th><th>NAV 잔액</th><th>펀드수</th></tr></thead><tbody id="ddBody"></tbody></table>
   </section>
 
-  <section class="report no-export">
-    <div class="sh"><span class="n">7</span> 보고 멘트 <small style="color:#a89e8e">— 자동 생성 · 편집 가능 · (저장 시 제외)</small></div>
-    <div class="report-box" id="report" contenteditable="true"></div>
-    <button class="copybtn" id="copy">📋 보고멘트 복사</button>
+  <section>
+    <div class="sh"><span class="n">7</span> 퇴직연금사업본부 <small>부서 = 퇴직연금사업본부 한정 · 행 클릭 시 구성 펀드</small></div>
+    <div class="dd-ctrl">
+      <label for="rtDim">분류 기준</label>
+      <select id="rtDim">
+        <option value="strat">전략펀드</option>
+        <option value="pen">연금구분</option>
+        <option value="pdetail">연금세부유형</option>
+      </select>
+      <span class="dd-hint" id="rtHint"></span>
+    </div>
+    <table><thead><tr><th id="rtColHead">분류</th><th>설정액 증감</th><th>NAV 증감</th><th>NAV 잔액</th><th>펀드수</th></tr></thead><tbody id="rtBody"></tbody></table>
+  </section>
+
+  <section>
+    <div class="sh"><span class="n">8</span> 시장데이터 <small>협회 기준 · 억원 · 현재 시장 트렌드</small></div>
+    <div class="slicer">
+      <span class="slicer-lab">슬라이서</span>
+      <button class="chip" id="chipMMF" type="button">MMF 포함</button>
+      <button class="chip active" id="chipCorp" type="button">법인MMF 제외</button>
+      <button class="chip" id="chipETF" type="button">ETF만 보기</button>
+      <span class="slicer-hint" id="slicerHint"></span>
+    </div>
+    <div class="two">
+      <div class="subcard">
+        <h4>시장 제로인 대분류 증감 <span class="tag">행 클릭=상세</span></h4>
+        <table><thead><tr><th>대분류</th><th>시장 순설정 증감</th></tr></thead><tbody id="mktTypeBody"></tbody></table>
+        <div class="mmf-corp" id="mmfCorpRow2"></div>
+      </div>
+      <div class="subcard">
+        <h4>주간 시장 주요 순설정 펀드</h4>
+        <ul class="items" id="mktFunds"></ul>
+        <h4 style="margin-top:13px">주간 시장 주요 순환매 펀드</h4>
+        <ul class="items" id="mktFundsOut"></ul>
+      </div>
+    </div>
+    <div class="two" style="margin-top:13px">
+      <div class="subcard"><h4>신규설정 펀드 <span class="tag" id="newCnt"></span> <span class="tag">대표펀드명 묶음 · 클릭=종류상세</span></h4><ul class="items" id="newFunds"></ul></div>
+      <div class="subcard"><h4>제로인유형 × 판매사 (절댓값 상위)</h4><ul class="items" id="typeSales"></ul></div>
+    </div>
+    <div class="note" id="cmt6" contenteditable="true" style="margin-top:13px"></div>
+  </section>
+
+  <section>
+    <div class="sh"><span class="n">9</span> 시장 vs 한화 <small>집중 테마 · 강점/약점 진단</small> <span class="tag">MMF 제외</span></div>
+    <div class="theme-cards">
+      <div class="tcard" id="themeBox"></div>
+      <div class="tcard good" id="strongBox"></div>
+      <div class="tcard bad" id="weakBox"></div>
+    </div>
+    <div class="two" style="margin-top:13px">
+      <div class="subcard">
+        <h4>제로인 대분류별 한화 vs 시장</h4>
+        <table><thead><tr><th>대분류</th><th>시장</th><th>한화</th><th>방향</th><th>평가</th></tr></thead><tbody id="vsTypeBody"></tbody></table>
+      </div>
+      <div class="subcard">
+        <h4>판매사별 한화 vs 시장 <span class="tag">시장 절댓값 상위</span></h4>
+        <table><thead><tr><th>판매사</th><th>시장</th><th>한화</th><th>평가</th></tr></thead><tbody id="vsSalesBody"></tbody></table>
+      </div>
+    </div>
+    <div class="note" id="cmt9" contenteditable="true" style="margin-top:13px"></div>
+    <div class="footnote" style="margin-top:8px;font-size:11px;color:var(--muted)">* 본 섹션(시장 vs 한화)은 MMF를 제외하고 집계·분석한 결과입니다.</div>
+  </section>
+
+  <section class="no-export" id="aiSection">
+    <div class="sh"><span class="n">10</span> AI 시장 테마 &amp; 한화 대응 분석 <small>Claude API 연동 · 시장 vs 한화 데이터 기반</small></div>
+    <div class="ai-cfg">
+      <input type="password" id="aiKey" placeholder="Anthropic API Key (sk-ant-...)" autocomplete="off">
+      <select id="aiModel">
+        <option value="claude-opus-4-20250514">Claude Opus 4 (정밀)</option>
+        <option value="claude-sonnet-4-20250514" selected>Claude Sonnet 4 (균형)</option>
+        <option value="claude-3-5-haiku-20241022">Claude 3.5 Haiku (빠름)</option>
+      </select>
+      <button class="ai-run" id="aiRun">AI 분석 실행</button>
+      <label style="font-size:11.5px;color:var(--muted);display:flex;align-items:center;gap:4px">
+        <input type="checkbox" id="aiSaveKey" style="width:auto"> 키 저장(브라우저)
+      </label>
+      <div class="hint">키는 이 브라우저에서만 사용되며 외부로 저장되지 않습니다(저장 체크 시 localStorage에만 보관). 현재 화면의 시장(협회)·한화 WM 데이터를 그대로 분석에 사용합니다.</div>
+    </div>
+    <div class="ai-out" id="aiOut"><span class="ph">API Key 입력 후 [AI 분석 실행]을 누르면, 현재 데이터를 기반으로 ① 시장 집중 테마 ② 한화 대응 평가 ③ 강점/약점 ④ 액션 제안을 생성합니다.</span></div>
   </section>
 
   <footer>WM마케팅본부 · 주간 수탁고 대시보드 · 엑셀 파일을 드롭하면 자동 갱신 · 회색 영역 클릭 시 수정</footer>
 </div>
 
-<script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
+<div class="modal-ov" id="drillOv">
+  <div class="modal" role="dialog" aria-modal="true">
+    <div class="modal-head">
+      <div><h3 id="drillTitle">-</h3><div class="mh-sub" id="drillSub"></div></div>
+      <button class="modal-x" id="drillClose" aria-label="닫기">&times;</button>
+    </div>
+    <div class="modal-body" id="drillBody"></div>
+  </div>
+</div>
+
+<script>
+/* ===== XLSX 멀티 CDN 폴백 로더 (사내망에서 일부 CDN 차단 대비) ===== */
+window.__XLSX_READY = (function(){
+  var cdns = [
+    "https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js",
+    "https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js",
+    "https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js",
+    "https://unpkg.com/xlsx@0.18.5/dist/xlsx.full.min.js"
+  ];
+  return new Promise(function(resolve, reject){
+    var i = 0;
+    (function next(){
+      if (window.XLSX) { resolve(window.XLSX); return; }
+      if (i >= cdns.length) { reject(new Error("모든 CDN에서 XLSX 로드 실패")); return; }
+      var s = document.createElement("script");
+      s.src = cdns[i++];
+      s.onload  = function(){ window.XLSX ? resolve(window.XLSX) : next(); };
+      s.onerror = next;
+      document.head.appendChild(s);
+    })();
+  });
+})();
+</script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script>
 const TODAY_DATA = {
  "wm": {
@@ -208,6 +398,144 @@ const TODAY_DATA = {
   "nav_chg_total": 3657.8,
   "flow_retail": -214.5,
   "flow_pension": -147.2,
+  "_sample": true,
+  "_rows": [
+   {
+    "fund": "한화 K제조핵심PLUS(주식) A",
+    "sales": "한화투자증권",
+    "strat": "K제조핵심",
+    "asset": "주식형",
+    "flow": -127.0,
+    "nav_chg": 4.0,
+    "nav": 600
+   },
+   {
+    "fund": "한화 K제조핵심PLUS(주식) C",
+    "sales": "국민은행",
+    "strat": "K제조핵심",
+    "asset": "주식형",
+    "flow": -51.0,
+    "nav_chg": 2.0,
+    "nav": 700
+   },
+   {
+    "fund": "한화 K제조핵심증권(주식) C-e",
+    "sales": "신한투자증권",
+    "strat": "K제조핵심",
+    "asset": "주식형",
+    "flow": 3.5,
+    "nav_chg": 1.6,
+    "nav": 479
+   },
+   {
+    "fund": "한화 K방산조선원전(주식) A",
+    "sales": "미래에셋증권",
+    "strat": "K방산조선원전",
+    "asset": "주식형",
+    "flow": 6.5,
+    "nav_chg": 70.0,
+    "nav": 600
+   },
+   {
+    "fund": "한화 K방산조선원전(주식) C",
+    "sales": "NH농협은행",
+    "strat": "K방산조선원전",
+    "asset": "주식형",
+    "flow": 5.1,
+    "nav_chg": 61.7,
+    "nav": 600
+   },
+   {
+    "fund": "한화 자사주품은고배당주(주식) C-f",
+    "sales": "한화투자증권",
+    "strat": "자사주품은고배당",
+    "asset": "주식형",
+    "flow": -20.0,
+    "nav_chg": -20.8,
+    "nav": 10
+   },
+   {
+    "fund": "한화 자사주품은고배당주(주식) A",
+    "sales": "하나은행",
+    "strat": "자사주품은고배당",
+    "asset": "주식형",
+    "flow": -0.1,
+    "nav_chg": -0.1,
+    "nav": 7
+   },
+   {
+    "fund": "한화 LIFEPLUS 적격TDF 2045 (주식혼합-재)",
+    "sales": "하나은행",
+    "strat": "TDF",
+    "asset": "해외기타",
+    "flow": -165.6,
+    "nav_chg": 200.0,
+    "nav": 8000
+   },
+   {
+    "fund": "한화 LIFEPLUS 적격TDF 2050 (주식혼합-재)",
+    "sales": "신한투자증권",
+    "strat": "TDF",
+    "asset": "해외기타",
+    "flow": 9.9,
+    "nav_chg": 80.0,
+    "nav": 3000
+   },
+   {
+    "fund": "한화 LIFEPLUS 적격TDF 2030 (주식혼합-재)",
+    "sales": "국민은행",
+    "strat": "TDF",
+    "asset": "해외기타",
+    "flow": 38.3,
+    "nav_chg": 72.1,
+    "nav": 3773
+   },
+   {
+    "fund": "한화내일받는단기국공채(채권) 종류C",
+    "sales": "IBK기업은행",
+    "strat": "단기국공채",
+    "asset": "채권형",
+    "flow": -54.5,
+    "nav_chg": -52.0,
+    "nav": 2000
+   },
+   {
+    "fund": "한화내일받는단기국공채(채권) 종류C-e",
+    "sales": "NH농협은행",
+    "strat": "단기국공채",
+    "asset": "채권형",
+    "flow": 17.9,
+    "nav_chg": 18.0,
+    "nav": 1500
+   },
+   {
+    "fund": "한화내일받는단기국공채(채권) 종류A",
+    "sales": "하나은행",
+    "strat": "단기국공채",
+    "asset": "채권형",
+    "flow": -14.2,
+    "nav_chg": -15.4,
+    "nav": 625
+   },
+   {
+    "fund": "한화코리아밸류채권(채권) 종류C",
+    "sales": "한화투자증권",
+    "strat": "코리아밸류채권",
+    "asset": "채권형",
+    "flow": -16.6,
+    "nav_chg": -15.4,
+    "nav": 1376
+   },
+   {
+    "fund": "한화 글로벌헤라클레스(주식) 종류C",
+    "sales": "미래에셋증권",
+    "strat": "헤라클레스",
+    "asset": "해외주식형",
+    "flow": -1.4,
+    "nav_chg": 9.6,
+    "nav": 417
+   }
+  ],
   "strat": [
    {
     "name": "K제조핵심",
@@ -368,7 +696,7 @@ const TODAY_DATA = {
   ]
  },
  "kofia": {
-  "hanwha_total": 81,
+  "hanwha_total": -539,
   "compare": [
    {
     "name": "주식형",
@@ -382,8 +710,8 @@ const TODAY_DATA = {
    },
    {
     "name": "MMF",
-    "hanwha": 669,
-    "market": 82427
+    "hanwha": 49,
+    "market": 10764
    },
    {
     "name": "해외기타",
@@ -396,30 +724,34 @@ const TODAY_DATA = {
     "market": 260
    }
   ],
+  "mmf_corp": {
+   "market": 74683,
+   "hanwha": 620
+  },
   "mkt_in": [
-   {
-    "name": "삼성베스트MMF법인 1",
-    "v": 12692
-   },
    {
     "name": "우리큰만족신종MMF6",
     "v": 12012
    },
    {
-    "name": "키움프런티어신종법인용 MMF 1",
-    "v": 11014
+    "name": "NH-Amundi코리아2배인버스레버리지증권투자신탁[주식-파생재",
+    "v": 1974
    },
    {
-    "name": "신한BEST신종법인용MMFGS-2(종류C)",
-    "v": 9000
+    "name": "KBRISE삼성전자SK하이닉스채권혼합50증권상장지수투자신탁(채",
+    "v": 1312
    },
    {
-    "name": "KB법인용MMF I-1C",
-    "v": 7425
+    "name": "KCGI코리아종합채권증권투자신탁[채권]종류CF",
+    "v": 1000
    },
    {
-    "name": "NH-Amundi법인MMF 8C0",
-    "v": 6618
+    "name": "하나클래스원신종MMF(K-5)ClassC-F",
+    "v": 860
+   },
+   {
+    "name": "삼성신종MMF 151_C",
+    "v": 854
    }
   ],
   "mkt_out": [
@@ -428,52 +760,52 @@ const TODAY_DATA = {
     "v": -2836
    },
    {
-    "name": "DB클린법인MMF 4ClassC",
-    "v": -2371
-   },
-   {
     "name": "하나신종MMF(S-29)ClassC",
     "v": -1115
    },
    {
-    "name": "신한BEST신종법인용MMFGS-2(종류C-w)",
-    "v": -950
+    "name": "우리나라초단기채권증권투자신탁[채권]ClassC",
+    "v": -652
    },
    {
-    "name": "교보악사일반형법인MMFClassC",
-    "v": -715
+    "name": "키움더드림단기채증권투자신탁[채권]C-F",
+    "v": -578
+   },
+   {
+    "name": "우리단기채권증권투자신탁(채권)ClassC-F",
+    "v": -462
    }
   ],
   "type_sales": [
    {
     "type": "MMF",
-    "sales": "엔에이치농협은행",
-    "v": 12366
-   },
-   {
-    "type": "MMF",
     "sales": "엘에스증권",
-    "v": 9740
-   },
-   {
-    "type": "MMF",
-    "sales": "한국투자증권",
-    "v": 8171
+    "v": 6414
    },
    {
     "type": "MMF",
     "sales": "하나증권",
-    "v": 7732
+    "v": -3129
    },
    {
     "type": "MMF",
-    "sales": "한화투자증권",
-    "v": 6409
+    "sales": "NH투자증권",
+    "v": 2902
    },
    {
     "type": "MMF",
-    "sales": "KB증권",
-    "v": 5135
+    "sales": "한국투자증권",
+    "v": -2728
+   },
+   {
+    "type": "기타",
+    "sales": "엔에이치농협은행",
+    "v": 1887
+   },
+   {
+    "type": "MMF",
+    "sales": "삼성증권",
+    "v": 1567
    }
   ],
   "new": [
@@ -522,6 +854,30 @@ const cls=v=>v>0?'up':(v<0?'down':'');
 const sgn=v=>(v>0?'+':'')+v.toLocaleString();
 const won=n=>{const j=Math.floor(n/10000),e=n%10000;return (j>0?j+'조 ':'')+e.toLocaleString()+'억';};
 const shortFund=n=>String(n).replace(/증권 ?자?투자신탁/g,'').replace(/투자신탁/g,'').trim().slice(0,30);
+
+/* ---------- localStorage persistence ---------- */
+const LS_PREFIX='wm-dash-v1-';
+const EDITABLE_IDS=['asof','period','cmt1','ins2','ins4','cmt6','cmt9'];
+function applyEditable(id, defaultHTML){
+  const el=document.getElementById(id); if(!el) return;
+  const saved=localStorage.getItem(LS_PREFIX+id);
+  el.innerHTML = (saved!==null) ? saved : defaultHTML;
+}
+function attachAutosave(){
+  EDITABLE_IDS.forEach(id=>{
+    const el=document.getElementById(id); if(!el) return;
+    let t; el.addEventListener('input',()=>{
+      clearTimeout(t);
+      t=setTimeout(()=>{localStorage.setItem(LS_PREFIX+id, el.innerHTML); flashSaved();},400);
+    });
+  });
+}
+function resetEditable(){ EDITABLE_IDS.forEach(id=>localStorage.removeItem(LS_PREFIX+id)); }
+function flashSaved(){
+  const f=document.getElementById('saveFlash'); if(!f) return;
+  f.style.opacity=1; clearTimeout(window.__sf);
+  window.__sf=setTimeout(()=>f.style.opacity=0,1200);
+}
 
 /* build column index map from a header row array */
 function colmap(headerRow){const m={};headerRow.forEach((h,i)=>{if(h!=null)m[String(h).trim()]=i;});return m;}
@@ -585,11 +941,50 @@ function parseWM(wb){
   const fdArr=Object.keys(fd).map(k=>({name:shortFund(k),v:f1(fd[k]['설정액증감'])})).sort((a,b)=>a.v-b.v);
   wm.fund_out=fdArr.slice(0,5); wm.fund_in=fdArr.slice(-5).reverse();
 
+  // 펀드 단위 원본행 저장 (드릴다운용)
+  // 추가 분류 컬럼: 헤더명 후보를 유연하게 탐색, 부서는 AF열(0-based 31) 폴백
+  const findCol=cands=>{ for(const n of cands){ if(C[n]!=null) return C[n]; } return null; };
+  const cCenter =findCol(['센터','센터명','지점','지점명','영업점','영업점명']);
+  const cRetire =findCol(['퇴직연금구분','퇴직연금','DC/DB','퇴직구분','퇴직연금유형','제도구분']);
+  const cPdetail=findCol(['연금세부유형','연금세부','연금세부구분','연금상세']);
+  let   cDept   =findCol(['부서','부서명','본부','본부명','사업본부','담당부서']);
+  if(cDept==null) cDept=31; // AF열 (A=0 … AF=31)
+  const sv=(r,ci)=>ci!=null?String(r[ci]).trim():'';
+  wm._rows = data.map(r=>({
+    fund: shortFund(r[C['펀드명']]),
+    sales: String(r[C['판매사명']]).trim(),
+    strat: stratOf(r),
+    asset: String(r[C['제로인대분류']]).trim(),
+    pen: G(r),
+    pdetail: sv(r,cPdetail),
+    center: sv(r,cCenter),
+    retire: sv(r,cRetire),
+    dept: sv(r,cDept),
+    flow: f1(num(r[C['설정액증감']])),
+    nav_chg: f1(num(r[C['NAV증감']])),
+    nav: Math.round(num(r[C['NAV']])/S)
+  }));
+  wm._sample = false;
+
   // asof from sheetname or fallback
   return wm;
 }
 
-/* ---------- KOFIA parser ---------- */
+/* ---------- KOFIA parser (per-row 저장 → 슬라이서로 재집계) ---------- */
+function repFund(name){
+  let s=String(name).trim();
+  s=s.replace(/\s*(종류|클래스|Class|class)\s*[A-Za-z0-9\-]*\s*$/,'');
+  s=s.replace(/_[A-Za-z0-9\-]+$/,'');
+  s=s.replace(/[\(\[][^\(\)\[\]]*[\)\]]\s*$/,'');
+  s=s.replace(/[\(\[][^\(\)\[\]]*$/,'');
+  return s.trim()||String(name).trim();
+}
+function groupNew(list){
+  const m={},mem={};
+  (list||[]).forEach(x=>{const r=repFund(x.name);if(!m[r]){m[r]={v:0,n:0,mgr:x.mgr};mem[r]=[];}m[r].v+=(x.v||0);m[r].n++;mem[r].push(x);});
+  const arr=Object.keys(m).map(k=>({rep:k,v:Math.round(m[k].v),n:m[k].n,mgr:m[k].mgr})).sort((a,b)=>b.v-a.v);
+  return {arr,mem};
+}
 function parseKO(wb){
   const rows=XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]],{header:1,raw:true});
   let hr=-1; for(let i=0;i<Math.min(5,rows.length);i++){ if(rows[i]&&rows[i].some(c=>String(c).trim()==='운용사')){hr=i;break;} }
@@ -599,36 +994,118 @@ function parseKO(wb){
   const num=v=>{const n=parseFloat(v);return isNaN(n)?0:n;};
   const data=[];
   for(let i=hr+1;i<rows.length;i++){const r=rows[i];if(r&&r.length)data.push(r);}
-
-  const byType={},byTypeHW={},byFund={},byTS={},byNew={};
-  let hwTotal=0;
-  data.forEach(r=>{
-    const d=num(r[ci.diff]), t=String(r[ci.typ]).trim(), mgr=String(r[ci.mgr]).trim();
-    byType[t]=(byType[t]||0)+d;
-    if(mgr==='한화운용'){byTypeHW[t]=(byTypeHW[t]||0)+d; hwTotal+=d;}
-    const fn=String(r[ci.fund]).trim(); byFund[fn]=(byFund[fn]||0)+d;
-    const tsk=t+'||'+String(r[ci.sales]).trim(); byTS[tsk]=(byTS[tsk]||0)+d;
-    // new fund: 설정일 >= 2026-06-11
-    let sd=r[ci.setdate]; let isNew=false;
-    if(sd instanceof Date) isNew = sd>=new Date('2026-06-11');
-    else if(typeof sd==='number'){const ed=new Date(Date.UTC(1899,11,30)+sd*86400000); isNew=ed>=new Date('2026-06-11');}
-    else if(sd){const ed=new Date(sd); if(!isNaN(ed)) isNew=ed>=new Date('2026-06-11');}
-    if(isNew){const k=fn+'||'+mgr; byNew[k]=(byNew[k]||0)+d;}
+  const NEW_FROM=new Date('2026-06-11');
+  const isNewDate=sd=>{
+    if(sd instanceof Date) return sd>=NEW_FROM;
+    if(typeof sd==='number'){const ed=new Date(Date.UTC(1899,11,30)+sd*86400000); return ed>=NEW_FROM;}
+    if(sd){const ed=new Date(sd); if(!isNaN(ed)) return ed>=NEW_FROM;}
+    return false;
+  };
+  const _rows=data.map(r=>{
+    const fn=String(r[ci.fund]).trim(), t=String(r[ci.typ]).trim(), mgr=String(r[ci.mgr]).trim();
+    const isMMF=t.indexOf('MMF')>=0;
+    return {
+      fund:fn, fundShort:fn.slice(0,34), rep:repFund(fn),
+      mgr:mgr, sales:String(r[ci.sales]).trim(), type:t,
+      diff:num(r[ci.diff]), isNew:isNewDate(r[ci.setdate]),
+      isMMF:isMMF, isCorpMMF:(isMMF && fn.indexOf('법인')>=0),
+      isETF:(fn.indexOf('상장지수투자신탁')>=0)
+    };
   });
-  const ko={};
-  ko.hanwha_total=Math.round(hwTotal);
-  ko.compare=['주식형','채권형','MMF','해외기타','해외주식형'].map(n=>({name:n,hanwha:Math.round(byTypeHW[n]||0),market:Math.round(byType[n]||0)}));
-  const fArr=Object.keys(byFund).map(k=>({name:k.slice(0,34),v:Math.round(byFund[k])})).sort((a,b)=>a.v-b.v);
-  ko.mkt_in=fArr.slice(-6).reverse(); ko.mkt_out=fArr.slice(0,5);
-  ko.type_sales=Object.keys(byTS).map(k=>{const[t,s]=k.split('||');return{type:t,sales:s,v:Math.round(byTS[k])};})
-    .sort((a,b)=>Math.abs(b.v)-Math.abs(a.v)).slice(0,6);
-  const nArr=Object.keys(byNew).map(k=>{const[n,m]=k.split('||');return{name:n.slice(0,34),mgr:m,v:Math.round(byNew[k])};}).sort((a,b)=>b.v-a.v);
-  ko.new=nArr.slice(0,6); ko.new_count=nArr.length;
-  return ko;
+  return {_rows:_rows};
 }
 
 /* ---------- renderers ---------- */
 function li(name,sub,v){return `<li><span class="name">${name}${sub?`<span class="sub">${sub}</span>`:''}</span><span class="amt ${cls(v)}">${sgn(v)}</span></li>`;}
+
+/* ---------- drill-down (added) ---------- */
+const escAttr=s=>String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');
+function liDrill(dim,name,v){
+  return `<li class="clickable" data-drill="${dim}" data-key="${escAttr(name)}"><span class="name">${name}<span class="chev">상세 &#9656;</span></span><span class="amt ${cls(v)}">${sgn(v)}</span></li>`;
+}
+const DIM_LABEL={sales:'판매사',strat:'전략펀드',asset:'자산분류 (제로인 대분류)',pen:'연금구분',center:'센터',retire:'퇴직연금구분',pdetail:'연금세부유형'};
+const DIM_HEAD ={sales:'판매사',strat:'전략펀드',asset:'대분류',pen:'연금구분',center:'센터',retire:'퇴직연금구분',pdetail:'연금세부유형'};
+function openDrill(dim,key,scope){
+  const wm=window.__WM||{};
+  let base=(wm._rows||[]);
+  if(scope==='retireHQ') base=base.filter(r=>r.dept==='퇴직연금사업본부');
+  const rows=base.filter(r=>String(r[dim]).trim()===key).sort((a,b)=>a.flow-b.flow);
+  document.getElementById('drillTitle').textContent=key;
+  document.getElementById('drillSub').textContent=`${scope==='retireHQ'?'[퇴직연금본부] ':''}${DIM_LABEL[dim]||dim} 상세 · ${rows.length}개 펀드`;
+  const body=document.getElementById('drillBody');
+  if(!rows.length){
+    body.innerHTML=`<div class="modal-empty">표시할 펀드 상세가 없습니다.<br>엑셀 파일을 업로드하면 보유 펀드 전체가 표시됩니다.</div>`;
+  }else{
+    let tf=0,tn=0,tv=0; rows.forEach(r=>{tf+=r.flow;tn+=r.nav_chg;tv+=r.nav;});
+    const showSales = dim!=='sales';
+    const trs=rows.map(r=>`<tr><td class="fn">${r.fund}</td>${showSales?`<td class="sl">${r.sales}</td>`:''}<td class="${cls(r.flow)}">${sgn(f1r(r.flow))}</td><td class="${cls(r.nav_chg)}">${sgn(f1r(r.nav_chg))}</td><td style="color:var(--muted)">${Math.round(r.nav).toLocaleString()}</td></tr>`).join('');
+    body.innerHTML=
+      `<div class="modal-sum">`+
+      `<div class="it"><div class="l">설정액 증감 합계</div><div class="vv ${cls(tf)}">${sgn(f1r(tf))}</div></div>`+
+      `<div class="it"><div class="l">NAV 증감 합계</div><div class="vv ${cls(tn)}">${sgn(f1r(tn))}</div></div>`+
+      `<div class="it"><div class="l">NAV 잔액 합계</div><div class="vv">${Math.round(tv).toLocaleString()}</div></div>`+
+      `<div class="it"><div class="l">펀드 수</div><div class="vv">${rows.length}</div></div></div>`+
+      `<table><thead><tr><th>펀드명</th>${showSales?'<th class="sl">판매사</th>':''}<th>설정액 증감</th><th>NAV 증감</th><th>NAV 잔액</th></tr></thead><tbody>${trs}</tbody></table>`+
+      (wm._sample?`<div class="modal-note">※ 기본 내장 데이터에는 <b>전략펀드 상세만</b> 포함되어 있어 합계가 위 표와 다를 수 있습니다. 실제 엑셀 파일을 업로드하면 해당 분류의 <b>모든 보유 펀드</b>가 표시되고 합계도 정확히 일치합니다.`+(dim==='sales'?` (판매사 단위 펀드 분해는 업로드 시 제공)`:'')+`</div>`:'');
+  }
+  document.getElementById('drillOv').classList.add('show');
+}
+const f1r=x=>Math.round(x*10)/10;
+
+/* ---------- 분류별 드릴다운 집계/렌더 ---------- */
+function aggBy(rows,dim){
+  const m={};
+  rows.forEach(r=>{
+    const k=(r[dim]==null?'':String(r[dim]).trim());
+    if(!k||k==='undefined'||k==='null'||k==='0') return;
+    if(!m[k]) m[k]={flow:0,nav_chg:0,nav:0,n:0};
+    m[k].flow+=(r.flow||0); m[k].nav_chg+=(r.nav_chg||0); m[k].nav+=(r.nav||0); m[k].n++;
+  });
+  return Object.keys(m).map(k=>({name:k,flow:f1r(m[k].flow),nav_chg:f1r(m[k].nav_chg),nav:Math.round(m[k].nav),n:m[k].n}))
+    .sort((a,b)=>a.flow-b.flow);
+}
+function renderDrillTable(bodyId,headId,dim,rows,scope){
+  const agg=aggBy(rows,dim);
+  const hd=document.getElementById(headId); if(hd) hd.textContent=DIM_HEAD[dim]||dim;
+  const body=document.getElementById(bodyId); if(!body) return 0;
+  if(!agg.length){
+    body.innerHTML=`<tr><td colspan="5" class="empty" style="text-align:left">해당 분류 데이터가 없습니다. 엑셀 파일을 업로드하면 표시됩니다.</td></tr>`;
+    return 0;
+  }
+  body.innerHTML=agg.map(a=>
+    `<tr class="clickable" data-drill="${dim}" data-key="${escAttr(a.name)}"${scope?` data-scope="${scope}"`:''}>`+
+    `<td class="name">${a.name}<span class="chev">&#9656;</span></td>`+
+    `<td class="${cls(a.flow)}">${sgn(a.flow)}</td>`+
+    `<td class="${cls(a.nav_chg)}">${sgn(a.nav_chg)}</td>`+
+    `<td style="color:var(--muted)">${a.nav.toLocaleString()}</td>`+
+    `<td style="color:var(--muted)">${a.n}</td></tr>`).join('');
+  return agg.length;
+}
+function renderClassify(){
+  const wm=window.__WM||{}; const rows=wm._rows||[];
+  const dim=document.getElementById('ddDim').value;
+  const n=renderDrillTable('ddBody','ddColHead',dim,rows);
+  document.getElementById('ddHint').textContent = rows.length?`전체 ${rows.length}개 펀드 · ${n}개 분류`:'엑셀 업로드 시 전체 펀드 기준으로 표시';
+}
+function renderRetire(){
+  const wm=window.__WM||{};
+  const rows=(wm._rows||[]).filter(r=>r.dept==='퇴직연금사업본부');
+  const dim=document.getElementById('rtDim').value;
+  renderDrillTable('rtBody','rtColHead',dim,rows,'retireHQ');
+  document.getElementById('rtHint').textContent = rows.length?`대상 ${rows.length}개 펀드`:'부서=퇴직연금사업본부 데이터 없음 (엑셀 업로드 시 표시)';
+}
+function closeDrill(){document.getElementById('drillOv').classList.remove('show');}
+document.addEventListener('click',e=>{
+  if(e.target.id==='chipMMF'){toggleMkt('mmf');return;}
+  if(e.target.id==='chipCorp'){toggleMkt('corp');return;}
+  if(e.target.id==='chipETF'){toggleMkt('etf');return;}
+  const md=e.target.closest('[data-mdrill]');
+  if(md){openMktDrill(md.getAttribute('data-mdrill'),md.getAttribute('data-key'));return;}
+  const t=e.target.closest('[data-drill]');
+  if(t){openDrill(t.getAttribute('data-drill'),t.getAttribute('data-key'),t.getAttribute('data-scope'));return;}
+  if(e.target.id==='drillOv'||e.target.id==='drillClose'){closeDrill();}
+});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeDrill();});
 
 function renderWM(wm){
   document.getElementById('kTotal').innerHTML=won(wm.total)+'<span class="u"></span>';
@@ -647,78 +1124,237 @@ function renderWM(wm){
   document.getElementById('pensionList').innerHTML=poFinal.map(x=>li(x.name,'',x.v)).join('');
 
   const tdf=wm.strat.find(s=>s.name==='TDF');
-  document.getElementById('ins2').innerHTML=`연금 순유출 <b>${sgn(wm.flow_pension)}억</b>은 TDF 환매 주도 (TDF 설정 ${tdf?sgn(tdf.flow):'-'}억). 하나은행 TDF2045가 주간 최대 유출 펀드.`;
+  applyEditable('ins2', `연금 순유출 <b>${sgn(wm.flow_pension)}억</b>은 TDF 환매 주도 (TDF 설정 ${tdf?sgn(tdf.flow):'-'}억). 하나은행 TDF2045가 주간 최대 유출 펀드.`);
 
-  document.getElementById('salesIn').innerHTML=wm.sales_in.map(x=>li(x.name,'',x.v)).join('');
-  document.getElementById('salesOut').innerHTML=wm.sales_out.map(x=>li(x.name,'',x.v)).join('');
+  document.getElementById('salesIn').innerHTML=wm.sales_in.map(x=>liDrill('sales',x.name,x.v)).join('');
+  document.getElementById('salesOut').innerHTML=wm.sales_out.map(x=>liDrill('sales',x.name,x.v)).join('');
 
   document.getElementById('stratBody').innerHTML=wm.strat.map(s=>
-    `<tr><td class="name">${s.name}</td><td class="${cls(s.flow)}">${sgn(s.flow)}</td><td class="${cls(s.nav_chg)}">${sgn(s.nav_chg)}</td><td style="color:var(--muted)">${s.nav.toLocaleString()}</td></tr>`).join('');
+    `<tr class="clickable" data-drill="strat" data-key="${escAttr(s.name)}"><td class="name">${s.name}<span class="chev">&#9656;</span></td><td class="${cls(s.flow)}">${sgn(s.flow)}</td><td class="${cls(s.nav_chg)}">${sgn(s.nav_chg)}</td><td style="color:var(--muted)">${s.nav.toLocaleString()}</td></tr>`).join('');
   const kj=wm.strat.find(s=>s.name==='K제조핵심');
-  document.getElementById('ins4').innerHTML=`<b>국내주식 인사이트:</b> 코스피 9,000 사상 최고 구간이나 상승은 반도체 편중 — 제조·배당 테마는 차익실현 환매 우위. K제조핵심 설정 ${kj?sgn(kj.flow):'-'}억이나 평가는 시장 강세로 방어. 방산(K방산조선원전)만 순유입.`;
+  applyEditable('ins4', `<b>국내주식 인사이트:</b> 코스피 9,000 사상 최고 구간이나 상승은 반도체 편중 — 제조·배당 테마는 차익실현 환매 우위. K제조핵심 설정 ${kj?sgn(kj.flow):'-'}억이나 평가는 시장 강세로 방어. 방산(K방산조선원전)만 순유입.`);
 
   document.getElementById('assetBody').innerHTML=wm.asset.map(a=>
-    `<tr><td class="name">${a.name}</td><td class="${cls(a.flow)}">${sgn(a.flow)}</td><td class="${cls(a.nav_chg)}">${sgn(a.nav_chg)}</td></tr>`).join('');
+    `<tr class="clickable" data-drill="asset" data-key="${escAttr(a.name)}"><td class="name">${a.name}<span class="chev">&#9656;</span></td><td class="${cls(a.flow)}">${sgn(a.flow)}</td><td class="${cls(a.nav_chg)}">${sgn(a.nav_chg)}</td></tr>`).join('');
 
-  buildReport(wm, window.__KO);
+  // 분류별 드릴다운 · 퇴직연금본부 테이블 갱신
+  renderClassify(); renderRetire();
 }
 
+let MKT_FILTER={exMMF:false, exCorpMMF:true, etfMode:'exclude'};
+const MKT_DIM_LABEL={type:'제로인 대분류',sales:'판매사',newrep:'신규설정 대표펀드'};
+function applyMktFilter(rows){
+  let b=(rows||[]).slice();
+  if(MKT_FILTER.etfMode==='only') b=b.filter(r=>r.isETF);
+  else b=b.filter(r=>!r.isETF);
+  if(MKT_FILTER.exCorpMMF) b=b.filter(r=>!r.isCorpMMF);
+  if(MKT_FILTER.exMMF) b=b.filter(r=>!r.isMMF);
+  return b;
+}
+/* 슬라이서 필터를 반영한 시장 집계 뷰 (업로드=원본행 재집계 / 샘플=내장집계 필터) */
+function koView(ko){
+  ko=ko||{}; const f=MKT_FILTER;
+  if(ko._rows){
+    const all=ko._rows;
+    const corp=all.filter(r=>r.isCorpMMF);
+    const base=applyMktFilter(all);
+    const sumBy=(arr,kf,hwOnly)=>{const m={};arr.forEach(r=>{if(hwOnly&&r.mgr!=='한화운용')return;const k=kf(r);if(k==null||k==='')return;m[k]=(m[k]||0)+r.diff;});return m;};
+    const TYPES=['주식형','채권형','MMF','해외기타','해외주식형'];
+    const mT=sumBy(base,r=>r.type), hT=sumBy(base,r=>r.type,true);
+    const compare=TYPES.filter(n=>!(f.exMMF&&n==='MMF')).map(n=>({name:n,hanwha:Math.round(hT[n]||0),market:Math.round(mT[n]||0)}));
+    const mmf_corp={market:Math.round(corp.reduce((s,r)=>s+r.diff,0)),hanwha:Math.round(corp.filter(r=>r.mgr==='한화운용').reduce((s,r)=>s+r.diff,0))};
+    const by_type=Object.keys(mT).map(k=>({name:k,v:Math.round(mT[k])})).sort((a,b)=>b.v-a.v);
+    const fM=sumBy(base,r=>r.fund);
+    const fA=Object.keys(fM).map(k=>({name:k.slice(0,34),v:Math.round(fM[k])})).sort((a,b)=>a.v-b.v);
+    const mkt_in=fA.slice(-8).reverse(), mkt_out=fA.slice(0,6);
+    const sM=sumBy(base,r=>r.sales);
+    const by_sales=Object.keys(sM).map(k=>({name:k,v:Math.round(sM[k])})).sort((a,b)=>Math.abs(b.v)-Math.abs(a.v));
+    const tsM=sumBy(base,r=>r.type+'||'+r.sales);
+    const type_sales=Object.keys(tsM).map(k=>{const a=k.split('||');return{type:a[0],sales:a[1],v:Math.round(tsM[k])};}).sort((a,b)=>Math.abs(b.v)-Math.abs(a.v)).slice(0,8);
+    const newList=base.filter(r=>r.isNew).map(r=>({name:r.fund,mgr:r.mgr,v:r.diff}));
+    const ng=groupNew(newList);
+    const hanwha_total=Math.round(base.filter(r=>r.mgr==='한화운용').reduce((s,r)=>s+r.diff,0));
+    return {compare,mmf_corp,by_type,mkt_in,mkt_out,by_sales,type_sales,new_grouped:ng,new_count:newList.length,hanwha_total,hasRows:true};
+  }
+  // 샘플(내장 집계) 경로
+  const isM=nm=>/MMF/i.test(nm||'');
+  const isE=nm=>/상장지수투자신탁/.test(nm||'');
+  const keepFund=x=>{ if(f.etfMode==='only'){ if(!isE(x.name))return false; } else if(isE(x.name))return false; if(f.exCorpMMF&&/법인/.test(x.name)&&isM(x.name))return false; if(f.exMMF&&isM(x.name))return false; return true; };
+  const compare=(ko.compare||[]).filter(c=>!(f.exMMF&&c.name==='MMF'));
+  const ng=groupNew((ko.new||[]).map(x=>({name:x.name,mgr:x.mgr,v:x.v})));
+  return {
+    compare, mmf_corp:ko.mmf_corp,
+    by_type:compare.map(c=>({name:c.name,v:c.market})).filter(c=>c.v).sort((a,b)=>b.v-a.v),
+    mkt_in:(ko.mkt_in||[]).filter(keepFund),
+    mkt_out:(ko.mkt_out||[]).filter(keepFund),
+    by_sales:null,
+    type_sales:(ko.type_sales||[]).filter(t=>!(f.exMMF&&isM(t.type))),
+    new_grouped:ng, new_count:ko.new_count||((ko.new||[]).length),
+    hanwha_total:ko.hanwha_total, hasRows:false
+  };
+}
+function syncSlicerUI(){
+  const cm=document.getElementById('chipMMF'), cc=document.getElementById('chipCorp');
+  if(cm){cm.classList.toggle('active',MKT_FILTER.exMMF); cm.textContent=MKT_FILTER.exMMF?'MMF 제외':'MMF 포함';}
+  if(cc){cc.classList.toggle('active',MKT_FILTER.exCorpMMF); cc.textContent=MKT_FILTER.exCorpMMF?'법인MMF 제외':'법인MMF 포함';}
+  const ce=document.getElementById('chipETF');
+  if(ce){const only=MKT_FILTER.etfMode==='only'; ce.classList.toggle('active',only); ce.textContent=only?'ETF만 보기 ✓':'ETF만 보기';}
+  const h=document.getElementById('slicerHint');
+  if(h){
+    const etfNote=(MKT_FILTER.etfMode==='only')?' · 현재 ETF(상장지수투자신탁)만 표시':' · ETF(상장지수투자신탁)는 일반 집계에서 제외됨';
+    h.textContent=((window.__KOV&&window.__KOV.hasRows)?'칩 클릭 시 대시보드에 즉시 반영 · 행 클릭=구성펀드':'칩 클릭 시 즉시 반영 · 협회 엑셀 업로드 시 전체 데이터에 적용')+etfNote;
+  }
+}
+function toggleMkt(which){
+  if(which==='mmf') MKT_FILTER.exMMF=!MKT_FILTER.exMMF;
+  else if(which==='etf') MKT_FILTER.etfMode=(MKT_FILTER.etfMode==='only')?'exclude':'only';
+  else MKT_FILTER.exCorpMMF=!MKT_FILTER.exCorpMMF;
+  renderKO(window.__KO);
+}
+function evalCell(market,hanwha){
+  if(market>0&&hanwha>0) return {b:'강점',c:'ev-good'};
+  if(market>0&&hanwha<0) return {b:'약점',c:'ev-bad'};
+  if(market<0&&hanwha>0) return {b:'선방',c:'ev-good'};
+  if(market<0&&hanwha<0) return {b:'동반유출',c:'ev-warn'};
+  return {b:'중립',c:'ev-neu'};
+}
 function renderKO(ko){
-  window.__KO=ko;
-  document.getElementById('cmpList').innerHTML=ko.compare.map(c=>
-    `<div class="cmp-bar"><span class="nm">${c.name}</span><span class="lab">한화</span><span class="v ${cls(c.hanwha)}">${sgn(c.hanwha)}</span><span class="lab">시장</span><span class="v ${cls(c.market)}">${sgn(c.market)}</span></div>`).join('');
-  document.getElementById('mktFunds').innerHTML=ko.mkt_in.map(x=>li(x.name,'',x.v)).join('');
-  document.getElementById('typeSales').innerHTML=ko.type_sales.map(x=>li(`[${x.type}] ${x.sales}`,'',x.v)).join('');
-  document.getElementById('newCnt').textContent=ko.new_count+'건';
-  document.getElementById('newFunds').innerHTML=ko.new.map(x=>li(x.name,x.mgr,x.v)).join('');
-  document.getElementById('cmt6').innerHTML=`<b>시장 vs 한화 진단:</b> 주식형(한화 ${sgn(ko.compare[0].hanwha)} vs 시장 ${sgn(ko.compare[0].market)})·채권형(한화 ${sgn(ko.compare[1].hanwha)} vs 시장 ${sgn(ko.compare[1].market)}) 순유출은 <b>한화 단독이 아닌 시장 전반 흐름</b>. 반기말 위험자산→MMF 자금이동(시장 MMF ${sgn(ko.compare[2].market)})의 일부이며, 한화 MMF 유입(${sgn(ko.compare[2].hanwha)})은 흐름은 동일하나 점유는 제한적. 신규설정은 국민참여형 국민성장펀드(사모재간접)가 주도.`;
-  if(window.__WM) buildReport(window.__WM, ko);
+  window.__KO=ko||{};
+  renderMkt(); renderVs();
+}
+function renderMkt(){
+  const ko=window.__KO||{}; const v=koView(ko); window.__KOV=v; ko._newmembers=v.new_grouped.mem;
+  document.getElementById('mktTypeBody').innerHTML = v.by_type.length? v.by_type.map(t=>
+    `<tr class="clickable" data-mdrill="type" data-key="${escAttr(t.name)}"><td class="name">${t.name}<span class="chev">&#9656;</span></td><td class="${cls(t.v)}">${sgn(t.v)}</td></tr>`).join('')
+    : `<tr><td colspan="2" class="empty" style="text-align:left">데이터 없음 (협회 엑셀 업로드 시 표시)</td></tr>`;
+  const corpRow=document.getElementById('mmfCorpRow2');
+  corpRow.style.display = MKT_FILTER.exCorpMMF? 'flex':'none';
+  if(v.mmf_corp){ corpRow.innerHTML=`<span class="lab">법인MMF (별도)</span><span class="sub">반기말 단기자금 · 본집계 제외</span><span class="v ${cls(v.mmf_corp.market)}">시장 ${sgn(v.mmf_corp.market)}</span>`; }
+  document.getElementById('mktFunds').innerHTML=v.mkt_in.length?v.mkt_in.map(x=>li(x.name,'',x.v)).join(''):'<li><span class="name" style="color:var(--muted)">데이터 없음</span></li>';
+  document.getElementById('mktFundsOut').innerHTML=v.mkt_out.length?v.mkt_out.map(x=>li(x.name,'',x.v)).join(''):'<li><span class="name" style="color:var(--muted)">데이터 없음</span></li>';
+  const ng=v.new_grouped.arr;
+  document.getElementById('newFunds').innerHTML = ng.length? ng.slice(0,8).map(g=>
+    `<li class="clickable" data-mdrill="newrep" data-key="${escAttr(g.rep)}"><span class="name">${g.rep}${g.n>1?` <span class="grp-badge">${g.n}종</span>`:''}<span class="sub">${g.mgr||''}${g.n>1?' · 종류 합산':''}</span></span><span class="amt ${cls(g.v)}">${sgn(g.v)}</span></li>`).join('')
+    : '<li><span class="name" style="color:var(--muted)">신규설정 없음</span></li>';
+  document.getElementById('newCnt').textContent = `${v.new_count}건 · 대표 ${ng.length}개`;
+  document.getElementById('typeSales').innerHTML=v.type_sales.length?v.type_sales.map(x=>li(`[${x.type}] ${x.sales}`,'',x.v)).join(''):'<li><span class="name" style="color:var(--muted)">데이터 없음</span></li>';
+  syncSlicerUI();
+  const g=n=>{const o=v.compare.find(x=>x.name===n);return o?o.market:0;};
+  const corpLine=(v.mmf_corp&&MKT_FILTER.exCorpMMF)?` 별도 집계한 <b>법인MMF 시장 ${sgn(v.mmf_corp.market)}</b>(반기말 단기자금)은 제외.`:'';
+  applyEditable('cmt6',`<b>시장 흐름:</b> 주식형 ${sgn(g('주식형'))} · 채권형 ${sgn(g('채권형'))}${MKT_FILTER.exMMF?' (MMF 제외 기준)':` · MMF ${sgn(g('MMF'))}`}.${corpLine} 신규설정 ${v.new_count}건이 자금 유입을 견인.`);
+}
+function renderVs(){
+  const ko=window.__KO||{}; const v=window.__KOV||koView(ko); const wm=window.__WM||{};
+  /* 9번 섹션은 전역 슬라이서와 무관하게 항상 MMF 제외하고 분석 */
+  const isMMFname=nm=>/MMF/i.test(nm||'');
+  const comp=(v.compare||[]).filter(c=>!isMMFname(c.name));
+  document.getElementById('vsTypeBody').innerHTML = comp.length? comp.map(c=>{
+    const ev=evalCell(c.market,c.hanwha);
+    const dir=((c.market>0)===(c.hanwha>0))?'일치':'역행';
+    return `<tr><td class="name">${c.name}</td><td class="${cls(c.market)}">${sgn(c.market)}</td><td class="${cls(c.hanwha)}">${sgn(c.hanwha)}</td><td class="dir">${dir}</td><td><span class="ev ${ev.c}">${ev.b}</span></td></tr>`;
+  }).join('') : `<tr><td colspan="5" class="empty" style="text-align:left">데이터 없음</td></tr>`;
+  let hwSales={};
+  if(wm._rows&&wm._rows.length){ wm._rows.forEach(r=>{ if(isMMFname(r.asset)||isMMFname(r.fund)) return; hwSales[r.sales]=(hwSales[r.sales]||0)+r.flow;}); }
+  else { (wm.sales_in||[]).concat(wm.sales_out||[]).forEach(x=>{hwSales[x.name]=x.v;}); }
+  let mktSales;
+  if(ko._rows&&ko._rows.length){
+    const m={}; ko._rows.forEach(r=>{ if(r.isMMF) return; m[r.sales]=(m[r.sales]||0)+r.diff; });
+    mktSales=Object.keys(m).map(k=>({name:k,v:Math.round(m[k])})).sort((a,b)=>Math.abs(b.v)-Math.abs(a.v));
+  } else {
+    mktSales=v.by_sales;
+    if(!mktSales){ const m={}; (v.type_sales||[]).filter(x=>!isMMFname(x.type)).forEach(x=>{m[x.sales]=(m[x.sales]||0)+x.v;}); mktSales=Object.keys(m).map(k=>({name:k,v:m[k]})).sort((a,b)=>Math.abs(b.v)-Math.abs(a.v)); }
+  }
+  const top=mktSales.slice(0,8);
+  document.getElementById('vsSalesBody').innerHTML = top.length? top.map(srow=>{
+    const hw=Math.round(hwSales[srow.name]||0); const ev=evalCell(srow.v,hw);
+    return `<tr><td class="name">${srow.name}</td><td class="${cls(srow.v)}">${sgn(srow.v)}</td><td class="${cls(hw)}">${hw?sgn(hw):'·'}</td><td><span class="ev ${ev.c}">${ev.b}</span></td></tr>`;
+  }).join('') : `<tr><td colspan="4" class="empty" style="text-align:left">데이터 없음</td></tr>`;
+  const inflow=comp.filter(c=>c.market>0).sort((a,b)=>b.market-a.market);
+  const theme=inflow.slice(0,3).map(c=>`${c.name} ${sgn(c.market)}`).join(' · ')||'뚜렷한 유입 테마 없음';
+  const strong=comp.filter(c=>(c.market>0&&c.hanwha>0)||(c.market<0&&c.hanwha>0)).map(c=>c.name);
+  const weak=comp.filter(c=>c.market>0&&c.hanwha<0).map(c=>c.name);
+  document.getElementById('themeBox').innerHTML=`<div class="tc-h">시장 집중 테마</div><div class="tc-b">${theme}</div>`;
+  document.getElementById('strongBox').innerHTML=`<div class="tc-h">한화 강점</div><div class="tc-b">${strong.length?strong.join(', ')+' <span style="font-weight:600;color:var(--muted)">— 동반 유입/역행 선방</span>':'뚜렷한 강점 분류 없음'}</div>`;
+  document.getElementById('weakBox').innerHTML=`<div class="tc-h">한화 약점</div><div class="tc-b">${weak.length?weak.join(', ')+' <span style="font-weight:600;color:var(--muted)">— 시장 유입인데 한화 유출</span>':'시장 유입 대비 유출 분류 없음'}</div>`;
+  applyEditable('cmt9',`<b>종합 진단:</b> 시장은 ${theme} 중심으로 자금이 유입. 한화는 ${strong.length?strong.join('·')+'에서 선전':'대체로 시장 흐름과 동조'}하나, ${weak.length?'<b>'+weak.join('·')+'</b>에서는 시장 유입 흐름을 놓치고 있어 보완 필요':'시장 유입 테마 대비 큰 약점은 제한적'}.`);
+}
+function openMktDrill(dim,key){
+  const ko=window.__KO||{};
+  document.getElementById('drillTitle').textContent=key;
+  let rows=[];
+  if(ko._rows){
+    let base=applyMktFilter(ko._rows);
+    if(dim==='type') base=base.filter(r=>r.type===key);
+    else if(dim==='sales') base=base.filter(r=>r.sales===key);
+    else if(dim==='newrep') base=base.filter(r=>r.isNew&&r.rep===key);
+    else base=[];
+    rows=base.map(r=>({fund:r.fundShort,mgr:r.mgr,v:Math.round(r.diff)})).sort((a,b)=>a.v-b.v);
+  } else if(dim==='newrep' && ko._newmembers && ko._newmembers[key]){
+    rows=ko._newmembers[key].map(m=>({fund:String(m.name).slice(0,34),mgr:m.mgr,v:Math.round(m.v)})).sort((a,b)=>a.v-b.v);
+  }
+  document.getElementById('drillSub').textContent=`[시장] ${MKT_DIM_LABEL[dim]||dim} 상세 · ${rows.length}개`;
+  const body=document.getElementById('drillBody');
+  if(!rows.length){
+    body.innerHTML=`<div class="modal-empty">시장 구성 펀드 상세는 <b>협회 엑셀 업로드 후</b> 표시됩니다.${dim==='newrep'?'<br>(신규설정 대표펀드의 종류별 구성)':''}</div>`;
+  } else {
+    let tv=0; rows.forEach(r=>tv+=r.v);
+    const trs=rows.map(r=>`<tr><td class="fn">${r.fund}</td><td class="sl">${r.mgr||''}</td><td class="${cls(r.v)}">${sgn(r.v)}</td></tr>`).join('');
+    body.innerHTML=`<div class="modal-sum"><div class="it"><div class="l">순설정 증감 합계</div><div class="vv ${cls(tv)}">${sgn(tv)}</div></div><div class="it"><div class="l">펀드/종류 수</div><div class="vv">${rows.length}</div></div></div>`+
+      `<table><thead><tr><th>펀드명</th><th class="sl">운용사</th><th>순설정 증감</th></tr></thead><tbody>${trs}</tbody></table>`;
+  }
+  document.getElementById('drillOv').classList.add('show');
 }
 
-function buildReport(wm, ko){
-  const tdf=wm.strat.find(s=>s.name==='TDF')||{flow:0};
-  const kj=wm.strat.find(s=>s.name==='K제조핵심')||{flow:0,nav_chg:0};
-  const eq=wm.asset.find(a=>a.name==='주식형')||{flow:0}, bd=wm.asset.find(a=>a.name==='채권형')||{flow:0}, mmf=wm.asset.find(a=>a.name==='MMF')||{flow:0};
-  let mktLine = ko ? `<li><b>시장 비교:</b> 주식형·채권형 순유출은 시장 전반 흐름(시장 주식형 ${sgn(ko.compare[0].market)}, MMF +${ko.compare[2].market.toLocaleString()}) — 한화 단독 이탈 아님</li>` : '';
-  document.getElementById('report').innerHTML=`<ul>
-    <li>주간 합계 <b>${won(wm.total)}</b> (리테일 ${won(wm.retail)} / 연금 ${won(wm.pension)})</li>
-    <li>순설정 <b>${sgn(wm.flow_total)}억</b>이나 평가금액은 코스피 강세로 <b>${sgn(wm.nav_chg_total)}억</b> — 시장 상승이 순유출 상쇄</li>
-    <li>리테일: MMF 위주 유입 / 연금: <b>TDF ${sgn(tdf.flow)}억</b> 환매(하나은행 TDF2045 −166)</li>
-    <li>판매사: ${wm.sales_out.slice(0,2).map(x=>x.name+' '+sgn(x.v)).join(', ')} / ${wm.sales_in[0].name} ${sgn(wm.sales_in[0].v)}</li>
-    <li>전략펀드: K제조핵심 설정 ${sgn(kj.flow)}(평가 ${sgn(kj.nav_chg)}) / 방산만 순유입</li>
-    <li>자산별: 주식형 ${sgn(eq.flow)}, 채권형 ${sgn(bd.flow)} / MMF ${sgn(mmf.flow)}</li>
-    ${mktLine}
-    <li><b>관전 포인트:</b> 시장 강세 ≠ 자금 유입, 반도체 외 테마(제조·배당) 이탈 방어 필요</li>
-  </ul>`;
-}
+function buildReport(){/* 보고멘트 섹션 제거됨 (웹 버전) */}
 
 /* default market commentary (편집 가능, 시장맥락은 수동) */
 function setDefaultCommentary(){
-  document.getElementById('cmt1').innerHTML=`코스피는 6/18 <b>2.25% 상승한 9,064p로 9,000선 첫 돌파·사상 최고치</b>(월간 +24.6%). 다만 상승은 SK하이닉스·삼성전자 등 <b>AI 반도체 편중</b>으로, 한화 주력인 제조·배당 테마는 차익실현 환매 우위. 그 결과 순설정은 감소했으나 평가금액은 시장 강세로 크게 증가. → <b>시장 상승 ≠ 한화 자금 유입</b>, 반도체 외 테마 자금 이탈 방어가 관전 포인트.`;
+  applyEditable('cmt1', `코스피는 6/18 <b>2.25% 상승한 9,064p로 9,000선 첫 돌파·사상 최고치</b>(월간 +24.6%). 다만 상승은 SK하이닉스·삼성전자 등 <b>AI 반도체 편중</b>으로, 한화 주력인 제조·배당 테마는 차익실현 환매 우위. 그 결과 순설정은 감소했으나 평가금액은 시장 강세로 크게 증가. → <b>시장 상승 ≠ 한화 자금 유입</b>, 반도체 외 테마 자금 이탈 방어가 관전 포인트.`);
 }
 
 /* ---------- file handling ---------- */
-function readFile(input, kind){
-  const file=input.files[0]; if(!file) return;
-  const reader=new FileReader();
-  reader.onload=e=>{
-    try{
-      const wb=XLSX.read(new Uint8Array(e.target.result),{type:'array',cellDates:true});
-      if(kind==='wm'){window.__WM=parseWM(wb);renderWM(window.__WM);
-        document.getElementById('dropWM').classList.add('ok');document.getElementById('wmName').textContent='✓ '+file.name.slice(0,22);}
-      else{const ko=parseKO(wb);renderKO(ko);
-        document.getElementById('dropKO').classList.add('ok');document.getElementById('koName').textContent='✓ '+file.name.slice(0,22);}
-    }catch(err){alert('파싱 오류: '+err.message);}
-  };
-  reader.readAsArrayBuffer(file);
+function processWorkbook(wb, kind, fileName){
+  // 새 파일이 올라오면 이전 편집 코멘트는 초기화 (새 수치로 다시 자동생성)
+  resetEditable();
+  if(kind==='wm'){window.__WM=parseWM(wb);renderWM(window.__WM);
+    document.getElementById('dropWM').classList.add('ok');document.getElementById('wmName').textContent='✓ '+fileName.slice(0,22);}
+  else{window.__KO=parseKO(wb);renderKO(window.__KO);
+    document.getElementById('dropKO').classList.add('ok');document.getElementById('koName').textContent='✓ '+fileName.slice(0,22);}
 }
-document.getElementById('fileWM').addEventListener('change',e=>readFile(e.target,'wm'));
-document.getElementById('fileKO').addEventListener('change',e=>readFile(e.target,'ko'));
-
-document.getElementById('copy').addEventListener('click',function(){
-  const txt=document.getElementById('report').innerText.split('\n').map(l=>l.trim()).filter(Boolean).map(l=>/^[•\-]/.test(l)?l:'• '+l).join('\n');
-  navigator.clipboard.writeText(txt).then(()=>{this.textContent='✓ 복사됨';this.classList.add('ok');setTimeout(()=>{this.textContent='📋 보고멘트 복사';this.classList.remove('ok');},1600);});
+function readFile(file, kind){
+  if(!file) return;
+  if(!/\.(xlsx|xls)$/i.test(file.name)){ alert('엑셀(.xlsx/.xls) 파일만 업로드할 수 있습니다.'); return; }
+  window.__XLSX_READY.then(function(XLSX){
+    const reader=new FileReader();
+    reader.onload=e=>{
+      try{
+        const wb=XLSX.read(new Uint8Array(e.target.result),{type:'array',cellDates:true});
+        processWorkbook(wb, kind, file.name);
+      }catch(err){alert('파싱 오류: '+err.message+'\n\n파일 양식(헤더/탭 이름)이 기존과 동일한지 확인해 주세요.');}
+    };
+    reader.onerror=()=>alert('파일을 읽지 못했습니다.');
+    reader.readAsArrayBuffer(file);
+  }).catch(function(){
+    alert('엑셀 라이브러리(XLSX)를 불러오지 못했습니다.\n\n사내망에서 외부 CDN(cdn.sheetjs.com 등)이 차단된 환경일 수 있습니다.\n· 인터넷이 되는 PC에서 열거나\n· IT부서에 cdn.sheetjs.com / jsdelivr / cdnjs 허용을 요청하세요.');
+  });
+}
+// 파일 선택(클릭) 처리
+document.getElementById('fileWM').addEventListener('change',e=>{ if(e.target.files[0]) readFile(e.target.files[0],'wm'); e.target.value=''; });
+document.getElementById('fileKO').addEventListener('change',e=>{ if(e.target.files[0]) readFile(e.target.files[0],'ko'); e.target.value=''; });
+// 드래그앤드롭 처리 (footer 안내대로 실제 동작하도록 추가)
+[['dropWM','wm'],['dropKO','ko']].forEach(function(pair){
+  const el=document.getElementById(pair[0]); const kind=pair[1];
+  if(!el) return;
+  ['dragenter','dragover'].forEach(ev=>el.addEventListener(ev,e=>{e.preventDefault();e.stopPropagation();el.classList.add('drag');}));
+  ['dragleave','dragend'].forEach(ev=>el.addEventListener(ev,e=>{e.preventDefault();e.stopPropagation();el.classList.remove('drag');}));
+  el.addEventListener('drop',e=>{
+    e.preventDefault();e.stopPropagation();el.classList.remove('drag');
+    const f=e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
+    if(f) readFile(f,kind);
+  });
 });
+// 페이지 전체에 잘못 드롭했을 때 브라우저가 파일을 여는 것 방지
+['dragover','drop'].forEach(ev=>window.addEventListener(ev,e=>{ if(!e.target.closest || !e.target.closest('.drop')){ e.preventDefault(); } }));
 
 /* ---------- export (PDF / IMG), 보고멘트(7) 제외 ---------- */
 async function capture(){
@@ -739,16 +1375,205 @@ document.getElementById('btnImg').addEventListener('click',async function(){
   b.textContent=o;b.disabled=false;
 });
 
+/* ---------- PDF 저장 (AI 시장 테마 & 한화 대응 분석 섹션 제외) ---------- */
+document.getElementById('btnPDF').addEventListener('click',async function(){
+  const b=this;b.disabled=true;const o=b.textContent;b.textContent='⏳ 생성 중…';
+  try{
+    const jsPDFns=(window.jspdf&&window.jspdf.jsPDF)||window.jsPDF;
+    if(!jsPDFns) throw new Error('jsPDF 로드 실패(인터넷/사내망 확인)');
+    /* capture()는 exporting 클래스로 .no-export(=AI 분석 섹션 등)를 숨긴 채 캡처함 */
+    const canvas=await capture();
+    const pdf=new jsPDFns({orientation:'p',unit:'mm',format:'a4'});
+    const pw=pdf.internal.pageSize.getWidth();
+    const ph=pdf.internal.pageSize.getHeight();
+    const imgW=pw;
+    const imgH=canvas.height*imgW/canvas.width;
+    let left=imgH; let pos=0;
+    const img=canvas.toDataURL('image/jpeg',0.92);
+    pdf.addImage(img,'JPEG',0,pos,imgW,imgH);
+    left-=ph;
+    while(left>0){
+      pos-=ph;
+      pdf.addPage();
+      pdf.addImage(img,'JPEG',0,pos,imgW,imgH);
+      left-=ph;
+    }
+    pdf.save(stamp()+'.pdf');
+  }catch(e){alert('PDF 저장 오류: '+e.message);}
+  b.textContent=o;b.disabled=false;
+});
 
+/* ---------- 공유 링크 생성 (편집 상태를 URL에 인코딩) ---------- */
+function encState(){
+  const state={};
+  EDITABLE_IDS.forEach(id=>{const el=document.getElementById(id); if(el) state[id]=el.innerHTML;});
+  return encodeURIComponent(btoa(unescape(encodeURIComponent(JSON.stringify(state)))));
+}
+function applyStateFromHash(){
+  const m=(location.hash||'').match(/[#&]s=([^&]+)/);
+  if(!m) return;
+  try{
+    const json=decodeURIComponent(escape(atob(decodeURIComponent(m[1]))));
+    const state=JSON.parse(json);
+    Object.keys(state).forEach(id=>{ if(EDITABLE_IDS.indexOf(id)>=0) localStorage.setItem(LS_PREFIX+id,state[id]); });
+  }catch(e){}
+}
+document.getElementById('btnLink').addEventListener('click',async function(){
+  const b=this;const o=b.textContent;
+  try{
+    const url=location.origin+location.pathname+'#s='+encState();
+    try{ await navigator.clipboard.writeText(url); }
+    catch(_){ const ta=document.createElement('textarea');ta.value=url;document.body.appendChild(ta);ta.select();document.execCommand('copy');ta.remove(); }
+    b.textContent='✓ 링크 복사됨';
+    setTimeout(()=>{b.textContent=o;},1500);
+  }catch(e){ alert('링크 생성 오류: '+e.message); b.textContent=o; }
+});
+
+/* ---------- AI 시장 테마 & 한화 대응 분석 (Claude API) ---------- */
+const AI_KEY_LS = 'wm-dash-anthropic-key';
+(function initAIKey(){
+  const saved = localStorage.getItem(AI_KEY_LS);
+  if(saved){ const k=document.getElementById('aiKey'); const c=document.getElementById('aiSaveKey'); if(k){k.value=saved;} if(c){c.checked=true;} }
+})();
+
+function buildAIContext(){
+  const wm = window.__WM || {};
+  const ko = window.__KO || {};
+  const v = koView(ko);
+  const ctx = {
+    기준: { asof: TODAY_DATA.asof, period: TODAY_DATA.period },
+    한화WM_주간수탁고: {
+      총수탁고_억: wm.total, 리테일_억: wm.retail, 연금_억: wm.pension,
+      순설정증감_억: wm.flow_total, 평가액증감_억: wm.nav_chg_total,
+      리테일순설정_억: wm.flow_retail, 연금순설정_억: wm.flow_pension,
+      전략펀드별: wm.strat, 자산분류별: wm.asset,
+      판매사_유입상위: wm.sales_in, 판매사_유출상위: wm.sales_out,
+      펀드_유입상위: wm.fund_in, 펀드_유출상위: wm.fund_out,
+      연금세부: wm.pension_detail,
+      퇴직연금사업본부_전략펀드별: (function(){
+        const rows=(wm._rows||[]).filter(r=>r.dept==='퇴직연금사업본부');
+        return rows.length?aggBy(rows,'strat').map(a=>({name:a.name,flow:a.flow,nav_chg:a.nav_chg,nav:a.nav})):[];
+      })()
+    },
+    시장_협회기준: {
+      슬라이서_적용: { MMF제외: MKT_FILTER.exMMF, 법인MMF제외: MKT_FILTER.exCorpMMF, ETF: (MKT_FILTER.etfMode==='only'?'ETF만':'ETF제외') },
+      한화_협회순증감_억: v.hanwha_total,
+      대분류_한화vs시장: v.compare,
+      법인MMF_별도: v.mmf_corp,
+      시장_대분류_순증감: v.by_type,
+      시장_주요순설정펀드: v.mkt_in,
+      시장_주요순환매펀드: v.mkt_out,
+      시장_판매사별순증감: v.by_sales || [],
+      대분류x판매사_주요: v.type_sales,
+      신규설정_대표펀드그룹: v.new_grouped.arr.slice(0,12),
+      신규설정_건수: v.new_count
+    }
+  };
+  return ctx;
+}
+
+function aiPrompt(ctx){
+  return [
+'당신은 한화자산운용 WM마케팅본부의 펀드 자금흐름 분석가입니다.',
+'아래 데이터는 같은 주간(period)의 ① 한화 WM 주간 수탁고와 ② 협회(시장 전체) 판매채널 자금흐름입니다. 단위는 모두 억원이며, 양수=순유입/증가, 음수=순유출/감소 입니다.',
+'',
+'분석 데이터(JSON):',
+'```json',
+JSON.stringify(ctx, null, 1),
+'```',
+'',
+'다음 구조로, 데이터 수치를 반드시 근거로 인용하며 한국어로 간결하게(전체 600~900자) 분석하세요. 마크다운으로 ## 제목, - 불릿, **굵게**를 사용하세요.',
+'',
+'## 시장 집중 테마',
+'- 시장(협회) 데이터에서 자금이 몰리는 테마/자산군 2~3개를 수치 근거와 함께 식별',
+'',
+'## 한화 WM 대응 평가',
+'- 시장 집중 테마 대비 한화의 자금흐름이 같은 방향인지/역행인지 한 줄 결론 + 근거 수치',
+'',
+'## 강점',
+'- 한화가 시장 대비 잘 방어/유입되는 영역 (구체 펀드·전략·판매사 명시)',
+'',
+'## 약점',
+'- 시장은 유입인데 한화는 유출이거나, 한화 주력에서 자금이 빠지는 영역',
+'',
+'## 액션 제안',
+'- WM마케팅 관점의 실행 제안 2~3가지'
+  ].join('\n');
+}
+
+function mdToHtml(md){
+  const esc=s=>s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  const lines = md.split('\n'); let out=[]; let inUl=false;
+  const inline = t => esc(t)
+      .replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>')
+      .replace(/(순유입|유입|증가|방어)/g,'<span class="badge-good">$1</span>')
+      .replace(/(순유출|유출|감소|이탈)/g,'<span class="badge-bad">$1</span>');
+  const closeUl=()=>{ if(inUl){out.push('</ul>'); inUl=false;} };
+  lines.forEach(raw=>{
+    const line=raw.trim();
+    if(!line){ closeUl(); return; }
+    let m;
+    if(m=line.match(/^#{1,6}\s+(.*)$/)){ closeUl(); out.push('<h4>'+inline(m[1])+'</h4>'); return; }
+    if(m=line.match(/^[-*•]\s+(.*)$/)){ if(!inUl){out.push('<ul>');inUl=true;} out.push('<li>'+inline(m[1])+'</li>'); return; }
+    closeUl(); out.push('<p>'+inline(line)+'</p>');
+  });
+  closeUl();
+  return out.join('');
+}
+
+async function runAIAnalysis(){
+  const btn=document.getElementById('aiRun');
+  const out=document.getElementById('aiOut');
+  const key=document.getElementById('aiKey').value.trim();
+  const model=document.getElementById('aiModel').value;
+  if(!key){ alert('Anthropic API Key를 입력하세요.'); return; }
+  if(document.getElementById('aiSaveKey').checked){ localStorage.setItem(AI_KEY_LS,key); } else { localStorage.removeItem(AI_KEY_LS); }
+  const ctx=buildAIContext();
+  btn.disabled=true; const o=btn.textContent; btn.textContent='분석 중…';
+  out.innerHTML='<span class="ph">Claude가 데이터를 분석하고 있습니다…</span>';
+  try{
+    const res=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{
+        'content-type':'application/json',
+        'x-api-key':key,
+        'anthropic-version':'2023-06-01',
+        'anthropic-dangerous-direct-browser-access':'true'
+      },
+      body:JSON.stringify({ model:model, max_tokens:2000, messages:[{role:'user',content:aiPrompt(ctx)}] })
+    });
+    const data=await res.json();
+    if(!res.ok){ throw new Error((data && data.error && data.error.message) || ('HTTP '+res.status)); }
+    const text=(data.content||[]).map(b=>b.text||'').join('\n').trim();
+    out.innerHTML = text ? mdToHtml(text) : '<span class="ph">응답이 비어 있습니다.</span>';
+  }catch(err){
+    out.innerHTML='<p class="badge-bad">분석 실패: '+String(err.message)+'</p>'+
+      '<p class="ph">· API Key/크레딧/모델명을 확인하세요. · 사내망에서 api.anthropic.com 이 차단되면 브라우저에서 직접 호출이 막힐 수 있습니다.</p>';
+  }finally{
+    btn.disabled=false; btn.textContent=o;
+  }
+}
+document.getElementById('aiRun').addEventListener('click',runAIAnalysis);
 
 /* ---------- initial load (baked-in today data) ---------- */
 (function init(){
-  document.getElementById('asof').textContent=TODAY_DATA.asof;
-  document.getElementById('period').textContent=TODAY_DATA.period;
+  applyStateFromHash();
+  applyEditable('asof', TODAY_DATA.asof);
+  applyEditable('period', TODAY_DATA.period);
   setDefaultCommentary();
   window.__WM=TODAY_DATA.wm; window.__KO=TODAY_DATA.kofia;
   renderKO(TODAY_DATA.kofia);
   renderWM(TODAY_DATA.wm);
+  document.getElementById('ddDim').addEventListener('change',renderClassify);
+  document.getElementById('rtDim').addEventListener('change',renderRetire);
+  attachAutosave();
+  const rb=document.getElementById('btnReset');
+  if(rb) rb.addEventListener('click',()=>{
+    if(confirm('편집한 모든 코멘트를 자동 생성 기본값으로 되돌립니다. 진행할까요?')){
+      resetEditable(); setDefaultCommentary(); applyEditable('asof', TODAY_DATA.asof); applyEditable('period', TODAY_DATA.period);
+      renderKO(window.__KO); renderWM(window.__WM);
+    }
+  });
 })();
 </script>
 </body>
