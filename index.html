@@ -1513,6 +1513,93 @@ document.getElementById('btnLink').addEventListener('click',async function(){
     setTimeout(()=>{b.textContent=o;},2000);
   }
 });
+const AI_KEY_LS = 'wm-dash-anthropic-key';
+(function initAIKey(){
+  const saved = localStorage.getItem(AI_KEY_LS);
+  if(saved){ const k=document.getElementById('aiKey'); const c=document.getElementById('aiSaveKey'); if(k){k.value=saved;} if(c){c.checked=true;} }
+})();
+
+function buildAIContext(){
+  const wm = window.__WM || {};
+  const ko = window.__KO || {};
+  const v = koView(ko);
+  const ctx = {
+    기준: { asof: TODAY_DATA.asof, period: TODAY_DATA.period },
+    한화WM_주간수탁고: {
+      총수탁고_억: wm.total, 리테일_억: wm.retail, 연금_억: wm.pension,
+      순설정증감_억: wm.flow_total, 평가액증감_억: wm.nav_chg_total,
+      리테일순설정_억: wm.flow_retail, 연금순설정_억: wm.flow_pension,
+      전략펀드별: wm.strat, 자산분류별: wm.asset,
+      판매사_유입상위: wm.sales_in, 판매사_유출상위: wm.sales_out,
+      펀드_유입상위: wm.fund_in, 펀드_유출상위: wm.fund_out,
+      연금세부: wm.pension_detail,
+      퇴직연금사업본부_전략펀드별: (function(){
+        const rows=(wm._rows||[]).filter(r=>r.dept==='퇴직연금사업본부');
+        return rows.length?aggBy(rows,'strat').map(a=>({name:a.name,flow:a.flow,nav_chg:a.nav_chg,nav:a.nav})):[];
+      })()
+    },
+    시장_협회기준: {
+      슬라이서_적용: { MMF제외: MKT_FILTER.exMMF, 법인MMF제외: MKT_FILTER.exCorpMMF, ETF: (MKT_FILTER.etfMode==='only'?'ETF만':'ETF제외') },
+      한화_협회순증감_억: v.hanwha_total,
+      대분류_한화vs시장: v.compare,
+      법인MMF_별도: v.mmf_corp,
+      시장_대분류_순증감: v.by_type,
+      시장_주요순설정펀드: v.mkt_in,
+      시장_주요순환매펀드: v.mkt_out,
+      시장_판매사별순증감: v.by_sales || [],
+      대분류x판매사_주요: v.type_sales,
+      신규설정_대표펀드그룹: v.new_grouped.arr.slice(0,12),
+      신규설정_건수: v.new_count
+    }
+  };
+  return ctx;
+}
+
+function aiPrompt(ctx){
+  return [
+'당신은 한화자산운용 WM마케팅본부의 펀드 자금흐름 분석가입니다.',
+'아래 데이터는 같은 주간(period)의 ① 한화 WM 주간 수탁고와 ② 협회(시장 전체) 판매채널 자금흐름입니다. 단위는 모두 억원이며, 양수=순유입/증가, 음수=순유출/감소 입니다.',
+'',
+'분석 데이터(JSON):',
+'```json',
+JSON.stringify(ctx, null, 1),
+'```',
+'',
+'다음 구조로, 데이터 수치를 반드시 근거로 인용하며 한국어로 간결하게(전체 600~900자) 분석하세요. 마크다운으로 ## 제목, - 불릿, **굵게**를 사용하세요.',
+'',
+'## 시장 집중 테마',
+'- 시장(협회) 데이터에서 자금이 몰리는 테마/자산군 2~3개를 수치 근거와 함께 식별',
+'',
+'## 한화 WM 대응 평가',
+'- 시장 집중 테마 대비 한화의 자금흐름이 같은 방향인지/역행인지 한 줄 결론 + 근거 수치',
+'',
+'## 강점',
+'- 한화가 시장 대비 잘 방어/유입되는 영역 (구체 펀드·전략·판매사 명시)',
+'',
+'## 약점',
+'- 시장은 유입인데 한화는 유출이거나, 한화 주력에서 자금이 빠지는 영역',
+'',
+'## 액션 제안',
+'- WM마케팅 관점의 실행 제안 2~3가지'
+  ].join('\n');
+}
+
+function mdToHtml(md){
+  const esc=s=>s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  const lines = md.split('\n'); let out=[]; let inUl=false;
+  const inline = t => esc(t)
+      .replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>')
+      .replace(/(순유입|유입|증가|방어)/g,'<span class="badge-good">$1</span>')
+      .replace(/(순유출|유출|감소|이탈)/g,'<span class="badge-bad">$1</span>');
+  const closeUl=()=>{ if(inUl){out.push('</ul>'); inUl=false;} };
+  lines.forEach(raw=>{
+    const line=raw.trim();
+    if(!line){ closeUl(); return; }
+    let m;
+    if(m=line.match(/^#{1,6}\s+(.*)$/)){ closeUl(); out.push('<h4>'+inline(m[1])+'</h4>'); return; }
+    if(m=line.match(/^[-*•]\s+(.*)$/)){ if(!inUl){out.push('<ul>');inUl=true;} out.push('<li>'+inline(m[1])+'</li>'); return; }
+    closeUl(); out.push('<p>'+inline(line)+'</p>');
+  });
   closeUl();
   return out.join('');
 }
@@ -1550,6 +1637,7 @@ async function runAIAnalysis(){
   }
 }
 document.getElementById('aiRun').addEventListener('click',runAIAnalysis);
+
 
 /* ---------- initial load (baked-in today data) ---------- */
 (async function init(){
